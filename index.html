@@ -186,7 +186,8 @@ function subscribeToChanges(){
       if(payload.eventType==="INSERT"){if(!registros.find(r=>r.id===payload.new.id))registros.push(payload.new);}
       else if(payload.eventType==="UPDATE"){const i=registros.findIndex(r=>r.id===payload.new.id);if(i>=0)registros[i]=payload.new;}
       else if(payload.eventType==="DELETE"){registros=registros.filter(r=>r.id!==payload.old.id);}
-      renderAll();
+      // Solo re-renderizar si no hay modal abierto (no interrumpir al usuario)
+      if(!document.getElementById("modalOverlay"))renderAll();
     }).subscribe();
 }
 
@@ -331,7 +332,7 @@ function renderKanban(){
       r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${oldState}" a "${newState}"`});
       if((newState==="Vendida"||newState==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
       renderAll();showToast(`${r.cliente} → ${newState}`);
-      saveRegistro(r).catch(()=>showToast("Error guardando"));
+      saveRegistro(r).then(()=>loadData().then(()=>renderAll())).catch(()=>{showToast("Error guardando");loadData().then(()=>renderAll());});
     });
   });
   const sel=document.getElementById("filterAsesor");const current=sel.value;
