@@ -697,9 +697,7 @@ window.addComment=addComment;window.saveDetail=saveDetail;window.deleteRecord=de
 
 function waitForSupabase(tries=0){
   if(typeof window.supabase !== "undefined"){
-    if(initSupabase()){
-      loadData().then(()=>{ renderAll(); subscribeToChanges(); });
-    }
+    if(initSupabase()){ init(); }
   } else if(tries < 20){
     setTimeout(()=>waitForSupabase(tries+1), 150);
   } else {
