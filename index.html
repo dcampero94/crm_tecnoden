@@ -330,7 +330,8 @@ function renderKanban(){
       const oldState=r.estado;r.estado=newState;r.fechaUltimoContacto=today();
       r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${oldState}" a "${newState}"`});
       if((newState==="Vendida"||newState==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
-      await saveRegistro(r);await loadData();renderAll();showToast(`${r.cliente} → ${newState}`);
+      renderAll();showToast(`${r.cliente} → ${newState}`);
+      saveRegistro(r).catch(()=>showToast("Error guardando"));
     });
   });
   const sel=document.getElementById("filterAsesor");const current=sel.value;
@@ -550,6 +551,3 @@ document.addEventListener("DOMContentLoaded",()=>waitForSupabase());
 </script>
 </body>
 </html>
-
-
-
