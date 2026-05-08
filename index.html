@@ -11,7 +11,8 @@
 @media(prefers-color-scheme:dark){:root{--color-background-primary:#1a1a1a;--color-background-secondary:#252521;--color-background-tertiary:#2f2f2a;--color-text-primary:#f0efea;--color-text-secondary:#b4b2a9;--color-text-tertiary:#888780;--color-border-tertiary:rgba(255,255,255,0.12);--color-border-secondary:rgba(255,255,255,0.22);}}
 body{margin:0;padding:1.5rem;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);max-width:1280px;margin:0 auto}
 h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:center;gap:8px}
-.crm-app{padding:0}.crm-tabs{display:flex;gap:4px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.25rem}
+.crm-app{padding:0;position:relative}
+.crm-tabs{display:flex;gap:4px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.25rem;flex-wrap:wrap}
 .crm-tab{padding:10px 16px;font-size:14px;font-weight:500;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
 .crm-tab.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
 .crm-tab:hover:not(.active){color:var(--color-text-primary)}
@@ -24,7 +25,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .crm-metric.alert .value{color:var(--color-text-danger)}.crm-metric.success .value{color:var(--color-text-success)}
 .crm-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
 .crm-toolbar input[type=text],.crm-toolbar select{height:32px;padding:0 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
-.crm-toolbar input[type=text]{flex:1;min-width:160px}
+.crm-toolbar input[type=text]{flex:1;min-width:140px}
 .crm-toolbar button{height:32px;padding:0 12px;font-size:13px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
 .crm-toolbar button.primary{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
 .kanban{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
@@ -42,8 +43,8 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .kcard .num{font-size:10px;color:var(--color-text-tertiary)}
 .pill{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;background:var(--color-background-secondary)}
 .pill.warn{background:#FCEBEB;color:#791F1F}.pill.ok{background:#EAF3DE;color:#27500A}.pill.stale{background:#FAEEDA;color:#854F0B}.pill.asesor{background:#EEEDFE;color:#3C3489}
-.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:10}
-.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.25rem;width:92%;max-width:540px;max-height:84vh;overflow-y:auto;border:0.5px solid var(--color-border-tertiary)}
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;z-index:10;padding-top:30px}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.25rem;width:92%;max-width:560px;max-height:88vh;overflow-y:auto;border:0.5px solid var(--color-border-tertiary)}
 .modal h3{margin:0 0 1rem;font-size:18px;font-weight:500}.modal .row{margin-bottom:12px}
 .modal label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500}
 .modal input,.modal select,.modal textarea{width:100%;padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit;box-sizing:border-box}
@@ -54,34 +55,52 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .modal .actions button.danger{color:var(--color-text-danger);border-color:var(--color-text-danger)}
 .detail-section{margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}.detail-section h4{margin:0 0 8px;font-size:14px;font-weight:500}
 .coment{background:var(--color-background-secondary);padding:8px 10px;border-radius:var(--border-radius-md);margin-bottom:6px;font-size:13px}
-.coment .head{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.coment .head{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;align-items:center}
 .coment .author{font-weight:500;color:var(--color-text-primary)}.coment .text{line-height:1.5}
+.coment .del-btn{background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);font-size:16px;padding:0 4px;line-height:1;flex-shrink:0}
+.coment .del-btn:hover{color:var(--color-text-danger)}
+.cierre-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cierre-box label{font-size:12px;color:var(--color-text-secondary);font-weight:500;margin:0;white-space:nowrap}
+.cierre-box input[type=date]{flex:1;min-width:130px;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.asesor-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--color-background-secondary);border-radius:20px;font-size:13px;font-weight:500;margin:3px}
+.asesor-tag button{background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);font-size:16px;line-height:1;padding:0}.asesor-tag button:hover{color:var(--color-text-danger)}
 .empty{text-align:center;padding:2rem;color:var(--color-text-tertiary);font-size:13px}
-.toast{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--color-text-primary);color:var(--color-background-primary);padding:10px 16px;border-radius:var(--border-radius-md);font-size:13px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--color-text-primary);color:var(--color-background-primary);padding:10px 20px;border-radius:var(--border-radius-md);font-size:13px;z-index:100;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}.tab-content{display:none}.tab-content.active{display:block}
 .dashboard-charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
-.chart-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;min-height:240px}
+.chart-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;min-height:200px}
 .chart-card h4{margin:0 0 12px;font-size:14px;font-weight:500;color:var(--color-text-secondary)}
 .bar-list{display:flex;flex-direction:column;gap:8px}
-.bar-row{display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:10px;font-size:12px}
-.bar-row .lbl{color:var(--color-text-secondary)}.bar-row .bar{height:18px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.bar-row{display:grid;grid-template-columns:90px 1fr 40px;align-items:center;gap:10px;font-size:12px}
+.bar-row .lbl{color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .bar{height:18px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
 .bar-row .fill{height:100%;background:#378ADD;border-radius:4px}.bar-row .val{text-align:right;font-weight:500}
 .alert-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
 .alert-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;cursor:pointer}
 .alert-item:hover{background:var(--color-background-tertiary)}.alert-item .who{font-weight:500}.alert-item .when{color:var(--color-text-tertiary)}
-.position-wrap{position:relative}
+.mes-banner{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 14px;margin-bottom:1rem;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:8px}
+.mes-banner strong{color:var(--color-text-primary)}
 @media(max-width:680px){.kanban{grid-template-columns:1fr;}.dashboard-charts{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <h1><i class="ti ti-solar-panel-2"></i> CRM Cotizaciones · Paneles Solares</h1>
-<div class="crm-app position-wrap" id="app">
+<div class="crm-app" id="app">
   <div class="crm-tabs">
     <button class="crm-tab active" data-view="dashboard">Dashboard</button>
     <button class="crm-tab" data-view="kanban">Pipeline <span class="badge" id="totalBadge">0</span></button>
     <button class="crm-tab" data-view="lista">Lista</button>
+    <button class="crm-tab" data-view="config">⚙ Asesores</button>
   </div>
+
+  <!-- DASHBOARD -->
   <div class="tab-content active" id="view-dashboard">
+    <div class="crm-toolbar" style="margin-bottom:1rem">
+      <label style="font-size:13px;color:var(--color-text-secondary);white-space:nowrap">Filtrar por mes:</label>
+      <select id="filterMesDash" style="height:32px;padding:0 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)"></select>
+      <button onclick="document.getElementById('filterMesDash').value='';renderDashboard()" style="height:32px;padding:0 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer">Ver todos</button>
+    </div>
+    <div id="mesBannerDash"></div>
     <div class="crm-metrics" id="metricsGrid"></div>
     <div class="dashboard-charts">
       <div class="chart-card"><h4>Cotizaciones por asesor</h4><div class="bar-list" id="chartAsesor"></div></div>
@@ -89,6 +108,8 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     </div>
     <div class="chart-card"><h4>Distribución del pipeline</h4><div class="bar-list" id="chartPipeline"></div></div>
   </div>
+
+  <!-- KANBAN -->
   <div class="tab-content" id="view-kanban">
     <div class="crm-toolbar">
       <input type="text" id="searchKanban" placeholder="Buscar cliente o teléfono..." />
@@ -97,33 +118,56 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     </div>
     <div class="kanban" id="kanbanBoard"></div>
   </div>
+
+  <!-- LISTA -->
   <div class="tab-content" id="view-lista">
     <div class="crm-toolbar">
       <input type="text" id="searchLista" placeholder="Buscar cliente o teléfono..." />
       <select id="filterEstado"><option value="">Todos los estados</option><option>Nuevo</option><option>En contacto</option><option>Interesado</option><option>Vendida</option><option>Perdida</option></select>
+      <select id="filterMesLista"></select>
       <button id="btnExport">Exportar CSV</button>
     </div>
     <div id="listaContainer"></div>
   </div>
+
+  <!-- CONFIG ASESORES -->
+  <div class="tab-content" id="view-config">
+    <div style="max-width:480px;padding:1rem 0">
+      <h3 style="font-size:18px;font-weight:500;margin:0 0 .5rem">Gestión de asesores</h3>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 1rem">Los asesores aquí definidos aparecen en todos los formularios y filtros. Se guardan en este navegador.</p>
+      <div id="asesorList" style="margin-bottom:1rem;min-height:40px"></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="nuevoAsesor" placeholder="Nombre del nuevo asesor" style="flex:1;height:36px;padding:0 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)" />
+        <button onclick="agregarAsesor()" style="height:36px;padding:0 16px;font-size:13px;font-weight:500;background:var(--color-text-primary);color:var(--color-background-primary);border:none;border-radius:var(--border-radius-md);cursor:pointer">Agregar</button>
+      </div>
+      <p style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px">Los cambios se reflejan inmediatamente en toda la app.</p>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
+
 <script>
 // === SUPABASE — edita solo estas dos líneas ===
-const SUPABASE_URL = "https://lernzlbzrgatqkadwhas.supabase.co";       // ej. https://xxxxx.supabase.co
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxlcm56bGJ6cmdhdHFrYWR3aGFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxODgwMzgsImV4cCI6MjA5Mzc2NDAzOH0.G4AWdtTdxew0_EHGeHx28ijwHJOuyuXyVG0KbR-J8k4";  // la "anon public" key
-const ESTADOS=["Nuevo","En contacto","Interesado","Vendida","Perdida"];
-let registros=[],detailId=null,sbClient=null;
+const SUPABASE_URL = "PEGA_AQUI_TU_URL";
+const SUPABASE_KEY = "PEGA_AQUI_TU_ANON_KEY";
 
+const ESTADOS = ["Nuevo","En contacto","Interesado","Vendida","Perdida"];
+const ASESORES_KEY = "crm_asesores_v1";
+let registros = [], detailId = null, sbClient = null;
+let ASESORES = ["Ana","DCA","GCA","Daniel","German"];
+
+// ── Supabase ──────────────────────────────────────────────
 function initSupabase(){
   if(typeof window.supabase==="undefined"){showToast("Error cargando Supabase");return false;}
-  sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   return true;
 }
 async function loadData(){
   if(!sbClient)return;
   const{data,error}=await sbClient.from("cotizaciones").select("*").order("num",{ascending:true});
   if(error){console.error(error);showToast("Error cargando datos");return;}
-  registros=data;
+  registros = data;
 }
 async function saveRegistro(r){
   if(!sbClient)return;
@@ -137,7 +181,7 @@ async function deleteRegistro(id){
 }
 function subscribeToChanges(){
   if(!sbClient)return;
-  sbClient.channel("cotizaciones-changes")
+  sbClient.channel("cotizaciones-rt")
     .on("postgres_changes",{event:"*",schema:"public",table:"cotizaciones"},(payload)=>{
       if(payload.eventType==="INSERT"){if(!registros.find(r=>r.id===payload.new.id))registros.push(payload.new);}
       else if(payload.eventType==="UPDATE"){const i=registros.findIndex(r=>r.id===payload.new.id);if(i>=0)registros[i]=payload.new;}
@@ -146,62 +190,129 @@ function subscribeToChanges(){
     }).subscribe();
 }
 
+// ── Asesores ──────────────────────────────────────────────
+function loadAsesores(){try{const v=localStorage.getItem(ASESORES_KEY);if(v)ASESORES=JSON.parse(v);}catch(e){}}
+function saveAsesores(){try{localStorage.setItem(ASESORES_KEY,JSON.stringify(ASESORES));}catch(e){}}
+function agregarAsesor(){
+  const inp=document.getElementById("nuevoAsesor");const nombre=inp.value.trim();
+  if(!nombre){showToast("Escribe un nombre");return;}
+  if(ASESORES.includes(nombre)){showToast("Ese asesor ya existe");return;}
+  ASESORES.push(nombre);saveAsesores();inp.value="";renderConfig();renderAll();showToast(`"${nombre}" agregado`);
+}
+function quitarAsesor(nombre){
+  if(registros.some(r=>r.asesor===nombre)){if(!confirm(`"${nombre}" tiene cotizaciones asignadas. ¿Quitar de la lista de todas formas?`))return;}
+  ASESORES=ASESORES.filter(a=>a!==nombre);saveAsesores();renderConfig();renderAll();showToast(`"${nombre}" eliminado`);
+}
+function renderConfig(){
+  document.getElementById("asesorList").innerHTML=ASESORES.length
+    ? ASESORES.map(a=>`<div class="asesor-tag"><span>${a}</span><button onclick="quitarAsesor('${a}')" title="Eliminar">×</button></div>`).join("")
+    : '<p style="font-size:13px;color:var(--color-text-tertiary)">Sin asesores definidos</p>';
+}
+function asesorOptions(selected=""){
+  return`<option value="">Sin asignar</option>`+ASESORES.map(a=>`<option ${a===selected?"selected":""}>${a}</option>`).join("");
+}
+
+// ── Meses ─────────────────────────────────────────────────
+const MESES_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function getMesesDisponibles(){
+  const set = new Set();
+  registros.forEach(r=>{
+    const f = (r.fechaRecepcion||"").split("T")[0];
+    if(f && f.length>=7) set.add(f.slice(0,7)); // "2026-01"
+  });
+  return [...set].sort().reverse();
+}
+function buildMesOptions(selectId, includeAll=true){
+  const sel = document.getElementById(selectId);
+  const current = sel.value;
+  const meses = getMesesDisponibles();
+  sel.innerHTML = (includeAll ? '<option value="">Todos los meses</option>' : '') +
+    meses.map(m=>{
+      const [y,mo] = m.split("-");
+      const label = `${MESES_ES[parseInt(mo)-1]} ${y}`;
+      return `<option value="${m}" ${m===current?"selected":""}>${label}</option>`;
+    }).join("");
+}
+function filtrarPorMes(lista, mesVal){
+  if(!mesVal) return lista;
+  return lista.filter(r=>(r.fechaRecepcion||"").startsWith(mesVal));
+}
+function mesBannerText(mesVal){
+  if(!mesVal) return "";
+  const [y,mo] = mesVal.split("-");
+  return `Mostrando: <strong>${MESES_ES[parseInt(mo)-1]} ${y}</strong>`;
+}
+
+// ── Utils ─────────────────────────────────────────────────
 const today=()=>new Date().toISOString().slice(0,10);
 const daysBetween=(d1,d2)=>{if(!d1||!d2)return null;return Math.round((new Date(d2)-new Date(d1))/86400000);};
-const fmtDate=(s)=>{if(!s)return"—";const[y,m,d]=s.split("-");return`${d}/${m}/${y.slice(2)}`;};
+const fmtDate=(s)=>{if(!s)return"—";const p=s.split("T")[0];const[y,m,d]=p.split("-");return`${d}/${m}/${y.slice(2)}`;};
 const fmtPhone=(p)=>{if(!p)return"—";const c=p.replace(/\D/g,"");if(c.length===10)return`${c.slice(0,3)} ${c.slice(3,6)} ${c.slice(6)}`;return p;};
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 function escapeHtml(s){if(!s)return"";return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function cleanDate(s){if(!s)return null;return s.split("T")[0];}
 
-function calcMetrics(){
-  const total=registros.length,vendidas=registros.filter(r=>r.estado==="Vendida").length,perdidas=registros.filter(r=>r.estado==="Perdida").length;
+// ── Dashboard ─────────────────────────────────────────────
+function calcMetrics(base){
+  const total=base.length,vendidas=base.filter(r=>r.estado==="Vendida").length,perdidas=base.filter(r=>r.estado==="Perdida").length;
   const cierre=(vendidas+perdidas)>0?Math.round(vendidas/(vendidas+perdidas)*100):0;
-  const sinRecibo=registros.filter(r=>!r.tieneRecibo&&!r.reciboNA&&r.estado!=="Vendida"&&r.estado!=="Perdida").length;
+  const sinRecibo=base.filter(r=>!r.tieneRecibo&&!r.reciboNA&&r.estado!=="Vendida"&&r.estado!=="Perdida").length;
   const t=today();
-  const resp=registros.filter(r=>r.fechaRecepcion&&r.fechaUltimoContacto).map(r=>daysBetween(r.fechaRecepcion,r.fechaUltimoContacto)).filter(n=>n!==null&&n>=0);
+  const resp=base.filter(r=>r.fechaRecepcion&&r.fechaUltimoContacto).map(r=>daysBetween(cleanDate(r.fechaRecepcion),cleanDate(r.fechaUltimoContacto))).filter(n=>n!==null&&n>=0);
   const promResp=resp.length>0?Math.round(resp.reduce((a,b)=>a+b,0)/resp.length):0;
-  const stale=registros.filter(r=>{if(r.estado==="Vendida"||r.estado==="Perdida")return false;const ref=r.fechaUltimoContacto||r.fechaRecepcion;if(!ref)return false;return daysBetween(ref,t)>=7;});
-  const sinAtender=registros.filter(r=>!r.asesor&&r.estado!=="Vendida"&&r.estado!=="Perdida").length;
+  const stale=base.filter(r=>{if(r.estado==="Vendida"||r.estado==="Perdida")return false;const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);if(!ref)return false;return daysBetween(ref,t)>=7;});
+  const sinAtender=base.filter(r=>!r.asesor&&r.estado!=="Vendida"&&r.estado!=="Perdida").length;
   return{total,vendidas,perdidas,cierre,sinRecibo,promResp,stale,sinAtender};
 }
 
-function renderMetrics(){
-  const m=calcMetrics();
+function renderDashboard(){
+  buildMesOptions("filterMesDash");
+  const mesVal = document.getElementById("filterMesDash").value;
+  const base = filtrarPorMes(registros, mesVal);
+  const banner = document.getElementById("mesBannerDash");
+  banner.innerHTML = mesVal ? `<div class="mes-banner">${mesBannerText(mesVal)} — ${base.length} cotizaciones</div>` : "";
+
+  const m = calcMetrics(base);
   document.getElementById("metricsGrid").innerHTML=`
     <div class="crm-metric"><div class="label">Total</div><div class="value">${m.total}</div><div class="sub">${m.vendidas} vendidas · ${m.perdidas} perdidas</div></div>
     <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.vendidas+m.perdidas} cerradas</div></div>
     <div class="crm-metric"><div class="label">Días promedio respuesta</div><div class="value">${m.promResp}</div><div class="sub">de recepción a 1er contacto</div></div>
-    <div class="crm-metric ${m.stale.length>5?'alert':''}"><div class="label">Sin contactar +7 días</div><div class="value">${m.stale.length}</div><div class="sub">requieren seguimiento</div></div>
-    <div class="crm-metric ${m.sinRecibo>0?'alert':''}"><div class="label">Sin recibo de luz</div><div class="value">${m.sinRecibo}</div><div class="sub">bloqueadas para cotizar</div></div>
-    <div class="crm-metric ${m.sinAtender>0?'alert':''}"><div class="label">Sin asignar</div><div class="value">${m.sinAtender}</div><div class="sub">sin asesor responsable</div></div>`;
-  document.getElementById("totalBadge").textContent=m.total;
-}
+    <div class="crm-metric ${m.stale.length>5?"alert":""}"><div class="label">Sin contactar +7 días</div><div class="value">${m.stale.length}</div><div class="sub">requieren seguimiento</div></div>
+    <div class="crm-metric ${m.sinRecibo>0?"alert":""}"><div class="label">Sin recibo de luz</div><div class="value">${m.sinRecibo}</div><div class="sub">bloqueadas para cotizar</div></div>
+    <div class="crm-metric ${m.sinAtender>0?"alert":""}"><div class="label">Sin asignar</div><div class="value">${m.sinAtender}</div><div class="sub">sin asesor responsable</div></div>`;
+  document.getElementById("totalBadge").textContent=registros.length;
 
-function renderCharts(){
-  const ases={};registros.forEach(r=>{const a=r.asesor||"Sin asignar";ases[a]=(ases[a]||0)+1;});
+  const ases={};base.forEach(r=>{const a=r.asesor||"Sin asignar";ases[a]=(ases[a]||0)+1;});
   const entries=Object.entries(ases).sort((a,b)=>b[1]-a[1]);const max=Math.max(...entries.map(e=>e[1]),1);
-  document.getElementById("chartAsesor").innerHTML=entries.map(([n,v])=>`<div class="bar-row"><div class="lbl">${n}</div><div class="bar"><div class="fill" style="width:${v/max*100}%"></div></div><div class="val">${v}</div></div>`).join("");
-  const pip={};ESTADOS.forEach(e=>pip[e]=registros.filter(r=>r.estado===e).length);const maxP=Math.max(...Object.values(pip),1);
+  document.getElementById("chartAsesor").innerHTML=entries.map(([n,v])=>`<div class="bar-row"><div class="lbl">${n}</div><div class="bar"><div class="fill" style="width:${v/max*100}%"></div></div><div class="val">${v}</div></div>`).join("")||'<div class="empty">Sin datos</div>';
+
+  const pip={};ESTADOS.forEach(e=>pip[e]=base.filter(r=>r.estado===e).length);const maxP=Math.max(...Object.values(pip),1);
   const colors={"Nuevo":"#888780","En contacto":"#378ADD","Interesado":"#EF9F27","Vendida":"#1D9E75","Perdida":"#E24B4A"};
   document.getElementById("chartPipeline").innerHTML=ESTADOS.map(e=>`<div class="bar-row"><div class="lbl">${e}</div><div class="bar"><div class="fill" style="width:${pip[e]/maxP*100}%;background:${colors[e]}"></div></div><div class="val">${pip[e]}</div></div>`).join("");
-  const m=calcMetrics();const t=today();
-  const stale=m.stale.map(r=>{const ref=r.fechaUltimoContacto||r.fechaRecepcion;return{...r,_dias:daysBetween(ref,t)};}).sort((a,b)=>b._dias-a._dias).slice(0,12);
+
+  const t=today();
+  const stale=m.stale.map(r=>{const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);return{...r,_dias:daysBetween(ref,t)};}).sort((a,b)=>b._dias-a._dias).slice(0,12);
   const ac=document.getElementById("alertsList");
-  if(stale.length===0){ac.innerHTML='<div class="empty">Todo al día ✓</div>';}
+  if(!stale.length){ac.innerHTML='<div class="empty">Todo al día ✓</div>';}
   else{ac.innerHTML=stale.map(r=>`<div class="alert-item" data-id="${r.id}"><div><div class="who">${escapeHtml(r.cliente)}</div><div style="color:var(--color-text-secondary);font-size:11px">${r.asesor||"Sin asignar"}</div></div><div class="when">${r._dias}d</div></div>`).join("");
     ac.querySelectorAll(".alert-item").forEach(el=>{el.onclick=()=>{switchView("kanban");setTimeout(()=>openDetail(el.dataset.id),100);};}); }
 }
 
+// ── Kanban ────────────────────────────────────────────────
 function renderKanban(){
   const q=document.getElementById("searchKanban").value.toLowerCase().trim();
   const a=document.getElementById("filterAsesor").value;
-  const filtered=registros.filter(r=>{if(q&&!r.cliente.toLowerCase().includes(q)&&!r.telefono.includes(q))return false;if(a&&r.asesor!==a)return false;return true;});
+  const filtered=registros.filter(r=>{
+    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
+    if(a&&r.asesor!==a)return false;
+    return true;
+  });
   document.getElementById("kanbanBoard").innerHTML=ESTADOS.map(estado=>{
     const items=filtered.filter(r=>r.estado===estado);
     return`<div class="kcol" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
-      const t=today();const ref=r.fechaUltimoContacto||r.fechaRecepcion;const dias=ref?daysBetween(ref,t):null;
-      const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="Perdida";const sinRecibo=!r.tieneRecibo&&!r.reciboNA;
-      return`<div class="kcard" draggable="true" data-id="${r.id}"><div class="num">#${r.num}</div><div class="name">${escapeHtml(r.cliente)}</div><div class="meta">${r.asesor?`<span class="pill asesor">${r.asesor}</span>`:''} ${sinRecibo?'<span class="pill warn">Sin recibo</span>':''} ${stale?`<span class="pill stale">${dias}d</span>`:''} ${r.cotizacionLista?'<span class="pill ok">Cotizado</span>':''}</div></div>`;
+      const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);
+      const dias=ref?daysBetween(ref,t):null;const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="Perdida";const sinRecibo=!r.tieneRecibo&&!r.reciboNA;
+      return`<div class="kcard" draggable="true" data-id="${r.id}"><div class="num">#${r.num}</div><div class="name">${escapeHtml(r.cliente)}</div><div class="meta">${r.asesor?`<span class="pill asesor">${r.asesor}</span>`:""} ${sinRecibo?'<span class="pill warn">Sin recibo</span>':""} ${stale?`<span class="pill stale">${dias}d</span>`:""} ${r.cotizacionLista?'<span class="pill ok">Cotizado</span>':""}</div></div>`;
     }).join("")}</div></div>`;
   }).join("");
   document.querySelectorAll(".kcard").forEach(card=>{
@@ -218,29 +329,60 @@ function renderKanban(){
       const r=registros.find(x=>x.id===id);if(!r||r.estado===newState)return;
       const oldState=r.estado;r.estado=newState;r.fechaUltimoContacto=today();
       r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${oldState}" a "${newState}"`});
-      await saveRegistro(r);renderAll();showToast(`${r.cliente} → ${newState}`);
+      if((newState==="Vendida"||newState==="Perdida")&&!r.fechaCierre)r.fechaCierre=today();
+      await saveRegistro(r);await loadData();renderAll();showToast(`${r.cliente} → ${newState}`);
     });
   });
   const sel=document.getElementById("filterAsesor");const current=sel.value;
-  const ases=[...new Set(registros.map(r=>r.asesor).filter(Boolean))].sort();
-  sel.innerHTML='<option value="">Todos los asesores</option>'+ases.map(a=>`<option ${a===current?'selected':''}>${a}</option>`).join("");
+  sel.innerHTML='<option value="">Todos los asesores</option>'+ASESORES.map(a=>`<option ${a===current?"selected":""}>${a}</option>`).join("");
 }
 
+// ── Lista ─────────────────────────────────────────────────
 function renderLista(){
-  const q=document.getElementById("searchLista").value.toLowerCase().trim();const e=document.getElementById("filterEstado").value;
-  const filtered=registros.filter(r=>{if(q&&!r.cliente.toLowerCase().includes(q)&&!r.telefono.includes(q))return false;if(e&&r.estado!==e)return false;return true;}).sort((a,b)=>b.num-a.num);
+  buildMesOptions("filterMesLista");
+  const q=document.getElementById("searchLista").value.toLowerCase().trim();
+  const e=document.getElementById("filterEstado").value;
+  const mesVal=document.getElementById("filterMesLista").value;
+  let filtered=registros.filter(r=>{
+    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
+    if(e&&r.estado!==e)return false;
+    return true;
+  });
+  filtered=filtrarPorMes(filtered,mesVal).sort((a,b)=>b.num-a.num);
   const c=document.getElementById("listaContainer");
-  if(filtered.length===0){c.innerHTML='<div class="empty">Sin resultados</div>';return;}
-  c.innerHTML=`<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed"><thead><tr style="background:var(--color-background-secondary);text-align:left"><th style="padding:10px;width:36px">#</th><th style="padding:10px">Cliente</th><th style="padding:10px;width:110px">Teléfono</th><th style="padding:10px;width:90px">Asesor</th><th style="padding:10px;width:110px">Estado</th><th style="padding:10px;width:80px">Días</th></tr></thead><tbody>${filtered.map(r=>{const ref=r.fechaUltimoContacto||r.fechaRecepcion;const dias=ref?daysBetween(ref,today()):null;const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="Perdida";return`<tr style="border-top:0.5px solid var(--color-border-tertiary);cursor:pointer" data-id="${r.id}" class="lrow"><td style="padding:10px;color:var(--color-text-tertiary)">${r.num}</td><td style="padding:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.cliente)}</td><td style="padding:10px;color:var(--color-text-secondary)">${fmtPhone(r.telefono)}</td><td style="padding:10px">${r.asesor||'—'}</td><td style="padding:10px"><span style="background:var(--color-background-secondary);padding:2px 8px;border-radius:8px;font-size:11px">${r.estado}</span></td><td style="padding:10px;color:${stale?'var(--color-text-danger)':'var(--color-text-secondary)'}">${dias!==null?dias+'d':'—'}</td></tr>`;}).join("")}</tbody></table></div>`;
+  if(!filtered.length){c.innerHTML='<div class="empty">Sin resultados</div>';return;}
+  c.innerHTML=`<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">
+      <thead><tr style="background:var(--color-background-secondary);text-align:left">
+        <th style="padding:10px;width:36px">#</th><th style="padding:10px">Cliente</th>
+        <th style="padding:10px;width:100px">Teléfono</th><th style="padding:10px;width:80px">Asesor</th>
+        <th style="padding:10px;width:100px">Estado</th><th style="padding:10px;width:65px">Días</th>
+        <th style="padding:10px;width:80px">Cierre</th>
+      </tr></thead>
+      <tbody>${filtered.map(r=>{
+        const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);const dias=ref?daysBetween(ref,today()):null;
+        const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="Perdida";
+        return`<tr style="border-top:0.5px solid var(--color-border-tertiary);cursor:pointer" data-id="${r.id}" class="lrow">
+          <td style="padding:10px;color:var(--color-text-tertiary)">${r.num}</td>
+          <td style="padding:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.cliente)}</td>
+          <td style="padding:10px;color:var(--color-text-secondary)">${fmtPhone(r.telefono)}</td>
+          <td style="padding:10px">${r.asesor||"—"}</td>
+          <td style="padding:10px"><span style="background:var(--color-background-secondary);padding:2px 8px;border-radius:8px;font-size:11px">${r.estado}</span></td>
+          <td style="padding:10px;color:${stale?"var(--color-text-danger)":"var(--color-text-secondary)"}">${dias!==null?dias+"d":"—"}</td>
+          <td style="padding:10px;color:var(--color-text-secondary);font-size:12px">${fmtDate(r.fechaCierre)}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>`;
   c.querySelectorAll(".lrow").forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
 }
 
+// ── Modales ───────────────────────────────────────────────
 function openNew(){
   showModal(`<h3>Nueva cotización</h3>
     <div class="row"><label>Nombre del cliente *</label><input type="text" id="m_cliente" placeholder="Ej. Juan Pérez" /></div>
     <div class="row"><label>Teléfono</label><input type="tel" id="m_telefono" placeholder="833 xxx xxxx" /></div>
     <div class="row"><label>Fecha de recepción</label><input type="date" id="m_fecha" value="${today()}" /></div>
-    <div class="row"><label>Asesor</label><select id="m_asesor"><option value="">Sin asignar</option><option>Ana</option><option>DCA</option><option>GCA</option><option>Daniel</option><option>German</option></select></div>
+    <div class="row"><label>Asesor</label><select id="m_asesor">${asesorOptions()}</select></div>
     <div class="row checkbox-row"><input type="checkbox" id="m_recibo" /><label for="m_recibo" style="margin:0">Tiene recibo de luz</label></div>
     <div class="row"><label>Comentario inicial</label><textarea id="m_coment" placeholder="Detalles del cliente..."></textarea></div>
     <div class="actions"><button onclick="closeModal()">Cancelar</button><button class="primary" onclick="saveNew()">Guardar</button></div>`);
@@ -251,59 +393,102 @@ async function saveNew(){
   const tel=document.getElementById("m_telefono").value.trim();const fecha=document.getElementById("m_fecha").value||today();
   const asesor=document.getElementById("m_asesor").value;const recibo=document.getElementById("m_recibo").checked;const coment=document.getElementById("m_coment").value.trim();
   const maxNum=registros.reduce((m,r)=>Math.max(m,r.num||0),0);
-  const nuevo={id:`sol_${maxNum+1}_${Date.now()}`,num:maxNum+1,cliente,telefono:tel.replace(/\D/g,""),fechaRecepcion:fecha,tieneRecibo:recibo,reciboNA:false,cotizacionLista:false,asesor,estado:"Nuevo",fechaUltimoContacto:fecha,comentarios:coment?[{fecha,autor:asesor||"Sistema",texto:coment}]:[]};
-  registros.push(nuevo);await saveRegistro(nuevo);closeModal();renderAll();showToast(`#${nuevo.num} ${cliente} agregado`);
+  const nuevo={id:`sol_${maxNum+1}_${Date.now()}`,num:maxNum+1,cliente,telefono:tel.replace(/\D/g,""),fechaRecepcion:fecha,tieneRecibo:recibo,reciboNA:false,cotizacionLista:false,asesor,estado:"Nuevo",fechaUltimoContacto:fecha,fechaCierre:null,comentarios:coment?[{fecha,autor:asesor||"Sistema",texto:coment}]:[]};
+  await saveRegistro(nuevo);await loadData();closeModal();renderAll();showToast(`#${nuevo.num} ${cliente} agregado`);
+}
+
+function renderComs(coms){
+  if(!coms||!coms.length)return'<div class="empty" style="padding:1rem">Sin comentarios todavía</div>';
+  return coms.slice().reverse().map((c,iRev)=>{
+    const i=coms.length-1-iRev;
+    return`<div class="coment">
+      <div class="head"><span><span class="author">${escapeHtml(c.autor)}</span> · ${fmtDate(c.fecha)}</span>
+      <button class="del-btn" onclick="deleteComment(${i})" title="Borrar comentario">×</button></div>
+      <div class="text">${escapeHtml(c.texto)}</div>
+    </div>`;
+  }).join("");
 }
 
 function openDetail(id){
   const r=registros.find(x=>x.id===id);if(!r)return;detailId=id;
-  const t=today();const ref=r.fechaUltimoContacto||r.fechaRecepcion;const dias=ref?daysBetween(ref,t):null;
+  const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);const dias=ref?daysBetween(ref,t):null;
+  const fechaCierreVal=cleanDate(r.fechaCierre)||"";
   showModal(`<h3>#${r.num} · ${escapeHtml(r.cliente)}</h3>
     <div class="row"><label>Cliente</label><input type="text" id="d_cliente" value="${escapeHtml(r.cliente)}" /></div>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div><label>Teléfono</label><input type="tel" id="d_telefono" value="${r.telefono||''}" /></div>
-      <div><label>Asesor</label><select id="d_asesor"><option value="">Sin asignar</option>${["Ana","DCA","GCA","Daniel","German"].map(a=>`<option ${r.asesor===a?'selected':''}>${a}</option>`).join("")}${r.asesor&&!["Ana","DCA","GCA","Daniel","German"].includes(r.asesor)?`<option selected>${r.asesor}</option>`:''}</select></div>
+      <div><label>Teléfono</label><input type="tel" id="d_telefono" value="${r.telefono||""}" /></div>
+      <div><label>Asesor</label><select id="d_asesor">${asesorOptions(r.asesor)}</select></div>
     </div>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div><label>Estado</label><select id="d_estado">${ESTADOS.map(e=>`<option ${r.estado===e?'selected':''}>${e}</option>`).join("")}</select></div>
-      <div><label>Recepción</label><input type="date" id="d_fecha" value="${r.fechaRecepcion||''}" /></div>
+      <div><label>Estado</label><select id="d_estado">${ESTADOS.map(e=>`<option ${r.estado===e?"selected":""}>${e}</option>`).join("")}</select></div>
+      <div><label>Fecha recepción</label><input type="date" id="d_fecha" value="${cleanDate(r.fechaRecepcion)||""}" /></div>
     </div>
     <div class="row" style="display:flex;gap:14px;font-size:13px">
-      <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_recibo" ${r.tieneRecibo?'checked':''}/> Tiene recibo</label>
-      <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_cot" ${r.cotizacionLista?'checked':''}/> Cotización lista</label>
+      <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_recibo" ${r.tieneRecibo?"checked":""}/> Tiene recibo</label>
+      <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_cot" ${r.cotizacionLista?"checked":""}/> Cotización lista</label>
+    </div>
+    <div class="row">
+      <label>Fecha de cierre</label>
+      <div class="cierre-box">
+        <label>📅</label>
+        <input type="date" id="d_cierre" value="${fechaCierreVal}" />
+        <span style="color:var(--color-text-tertiary);font-size:11px">se marca auto al mover a Vendida/Perdida</span>
+      </div>
     </div>
     <div class="detail-section"><h4>Bitácora de seguimiento</h4>
-      <div class="row" style="display:grid;grid-template-columns:90px 1fr auto;gap:6px;margin-bottom:6px">
-        <select id="c_autor" style="font-size:12px;padding:6px 8px">${["Ana","DCA","GCA","Daniel","German","Sistema"].map(a=>`<option>${a}</option>`).join("")}</select>
-        <input type="text" id="c_texto" placeholder="Nuevo comentario..." style="font-size:12px;padding:6px 8px" />
-        <button onclick="addComment()" style="padding:6px 10px;font-size:12px;font-weight:500;background:var(--color-text-primary);color:var(--color-background-primary);border:none;border-radius:var(--border-radius-md);cursor:pointer">Añadir</button>
+      <div style="display:grid;grid-template-columns:90px 1fr auto;gap:6px;margin-bottom:8px">
+        <select id="c_autor" style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)">${ASESORES.concat(["Sistema"]).map(a=>`<option>${a}</option>`).join("")}</select>
+        <input type="text" id="c_texto" placeholder="Nuevo comentario..." style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)" />
+        <button onclick="addComment()" style="padding:6px 12px;font-size:12px;font-weight:500;background:var(--color-text-primary);color:var(--color-background-primary);border:none;border-radius:var(--border-radius-md);cursor:pointer">Añadir</button>
       </div>
-      <div id="comentList">${(r.comentarios||[]).slice().reverse().map(c=>`<div class="coment"><div class="head"><span class="author">${c.autor}</span><span>${fmtDate(c.fecha)}</span></div><div class="text">${escapeHtml(c.texto)}</div></div>`).join("")||'<div class="empty" style="padding:1rem">Sin comentarios todavía</div>'}</div>
+      <div id="comentList">${renderComs(r.comentarios)}</div>
     </div>
-    <div style="margin-top:1rem;padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary)">Recepción: ${fmtDate(r.fechaRecepcion)} · Último contacto: ${fmtDate(r.fechaUltimoContacto)}${dias!==null?` (hace ${dias} días)`:''}</div>
-    <div class="actions"><button class="danger" onclick="deleteRecord()">Eliminar</button><button onclick="closeModal()">Cerrar</button><button class="primary" onclick="saveDetail()">Guardar cambios</button></div>`);
+    <div style="margin-top:1rem;padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary)">
+      Recepción: ${fmtDate(r.fechaRecepcion)} · Último contacto: ${fmtDate(r.fechaUltimoContacto)}${dias!==null?` (hace ${dias} días)`:""}${r.fechaCierre?` · Cierre: ${fmtDate(r.fechaCierre)}`:""}
+    </div>
+    <div class="actions">
+      <button class="danger" onclick="deleteRecord()">Eliminar</button>
+      <button onclick="closeModal()">Cerrar</button>
+      <button class="primary" onclick="saveDetail()">Guardar cambios</button>
+    </div>`);
+  const ct=document.getElementById("c_texto");
+  if(ct)ct.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment();}});
 }
 
 async function addComment(){
   const r=registros.find(x=>x.id===detailId);if(!r)return;
   const autor=document.getElementById("c_autor").value;const texto=document.getElementById("c_texto").value.trim();if(!texto)return;
   r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor,texto});r.fechaUltimoContacto=today();
-  await saveRegistro(r);openDetail(detailId);renderAll();showToast("Comentario agregado");
+  await saveRegistro(r);await loadData();openDetail(detailId);renderAll();showToast("Comentario agregado");
+}
+
+async function deleteComment(idx){
+  const r=registros.find(x=>x.id===detailId);if(!r)return;
+  if(!confirm("¿Borrar este comentario?"))return;
+  r.comentarios.splice(idx,1);
+  await saveRegistro(r);await loadData();openDetail(detailId);renderAll();showToast("Comentario eliminado");
 }
 
 async function saveDetail(){
   const r=registros.find(x=>x.id===detailId);if(!r)return;
   const newCliente=document.getElementById("d_cliente").value.trim();if(!newCliente){showToast("Cliente obligatorio");return;}
-  r.cliente=newCliente;r.telefono=document.getElementById("d_telefono").value.trim().replace(/\D/g,"");r.asesor=document.getElementById("d_asesor").value;
+  r.cliente=newCliente;
+  r.telefono=document.getElementById("d_telefono").value.trim().replace(/\D/g,"");
+  r.asesor=document.getElementById("d_asesor").value;
   const newEstado=document.getElementById("d_estado").value;
   if(newEstado!==r.estado){r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${r.estado}" a "${newEstado}"`});r.fechaUltimoContacto=today();}
-  r.estado=newEstado;r.fechaRecepcion=document.getElementById("d_fecha").value;r.tieneRecibo=document.getElementById("d_recibo").checked;if(r.tieneRecibo)r.reciboNA=false;r.cotizacionLista=document.getElementById("d_cot").checked;
-  await saveRegistro(r);closeModal();renderAll();showToast("Cambios guardados");
+  r.estado=newEstado;
+  r.fechaRecepcion=document.getElementById("d_fecha").value;
+  r.tieneRecibo=document.getElementById("d_recibo").checked;if(r.tieneRecibo)r.reciboNA=false;
+  r.cotizacionLista=document.getElementById("d_cot").checked;
+  const cv=document.getElementById("d_cierre").value;r.fechaCierre=cv||null;
+  if((newEstado==="Vendida"||newEstado==="Perdida")&&!r.fechaCierre)r.fechaCierre=today();
+  await saveRegistro(r);await loadData();closeModal();renderAll();showToast("Cambios guardados");
 }
 
 async function deleteRecord(){
   if(!confirm("¿Eliminar esta cotización? No se puede deshacer."))return;
-  await deleteRegistro(detailId);registros=registros.filter(x=>x.id!==detailId);closeModal();renderAll();showToast("Cotización eliminada");
+  await deleteRegistro(detailId);await loadData();closeModal();renderAll();showToast("Cotización eliminada");
 }
 
 function showModal(html){
@@ -314,29 +499,47 @@ function showModal(html){
 function closeModal(){const ov=document.getElementById("modalOverlay");if(ov)ov.remove();detailId=null;}
 
 function exportCSV(){
-  const rows=[["#","Cliente","Telefono","Asesor","Estado","Recepcion","UltimoContacto","TieneRecibo","CotizacionLista","Comentarios"]];
-  registros.slice().sort((a,b)=>a.num-b.num).forEach(r=>{const com=(r.comentarios||[]).map(c=>`[${c.fecha} ${c.autor}] ${c.texto}`).join(" | ");rows.push([r.num,r.cliente,r.telefono,r.asesor,r.estado,r.fechaRecepcion||"",r.fechaUltimoContacto||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);});
+  const mesVal=document.getElementById("filterMesLista").value;
+  const base=filtrarPorMes(registros,mesVal);
+  const rows=[["#","Cliente","Telefono","Asesor","Estado","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
+  base.slice().sort((a,b)=>a.num-b.num).forEach(r=>{
+    const com=(r.comentarios||[]).map(c=>`[${c.fecha} ${c.autor}] ${c.texto}`).join(" | ");
+    rows.push([r.num,r.cliente,r.telefono,r.asesor,r.estado,cleanDate(r.fechaRecepcion)||"",cleanDate(r.fechaUltimoContacto)||"",cleanDate(r.fechaCierre)||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);
+  });
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=`cotizaciones_${today()}.csv`;a.click();URL.revokeObjectURL(url);showToast("CSV descargado");
+  const a=document.createElement("a");a.href=url;a.download=`cotizaciones_${mesVal||"todas"}_${today()}.csv`;a.click();URL.revokeObjectURL(url);showToast("CSV descargado");
 }
 
 function switchView(v){
   document.querySelectorAll(".crm-tab").forEach(t=>t.classList.toggle("active",t.dataset.view===v));
   document.querySelectorAll(".tab-content").forEach(c=>c.classList.toggle("active",c.id===`view-${v}`));
-  if(v==="dashboard"){renderMetrics();renderCharts();}if(v==="kanban")renderKanban();if(v==="lista")renderLista();
+  if(v==="dashboard")renderDashboard();
+  if(v==="kanban")renderKanban();
+  if(v==="lista")renderLista();
+  if(v==="config")renderConfig();
 }
-function renderAll(){renderMetrics();renderCharts();renderKanban();renderLista();}
+function renderAll(){
+  const activeView=document.querySelector(".crm-tab.active")?.dataset.view||"dashboard";
+  if(activeView==="dashboard")renderDashboard();
+  else if(activeView==="kanban")renderKanban();
+  else if(activeView==="lista")renderLista();
+  document.getElementById("totalBadge").textContent=registros.length;
+}
 
 async function init(){
-  await loadData();renderAll();
+  loadAsesores();await loadData();
+  renderDashboard();renderKanban();renderLista();
+  document.getElementById("totalBadge").textContent=registros.length;
   document.querySelectorAll(".crm-tab").forEach(t=>t.onclick=()=>switchView(t.dataset.view));
   document.getElementById("btnNuevo").onclick=openNew;document.getElementById("btnExport").onclick=exportCSV;
   document.getElementById("searchKanban").oninput=renderKanban;document.getElementById("filterAsesor").onchange=renderKanban;
   document.getElementById("searchLista").oninput=renderLista;document.getElementById("filterEstado").onchange=renderLista;
+  document.getElementById("filterMesLista").onchange=renderLista;
+  document.getElementById("filterMesDash").onchange=renderDashboard;
   subscribeToChanges();
 }
-window.addComment=addComment;window.saveDetail=saveDetail;window.deleteRecord=deleteRecord;window.saveNew=saveNew;window.closeModal=closeModal;
+window.addComment=addComment;window.saveDetail=saveDetail;window.deleteRecord=deleteRecord;window.saveNew=saveNew;window.closeModal=closeModal;window.deleteComment=deleteComment;window.agregarAsesor=agregarAsesor;window.quitarAsesor=quitarAsesor;
 
 function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){if(initSupabase())init();}
