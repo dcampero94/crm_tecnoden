@@ -276,7 +276,7 @@ function renderDashboard(){
   const m = calcMetrics(base);
   document.getElementById("metricsGrid").innerHTML=`
     <div class="crm-metric"><div class="label">Total</div><div class="value">${m.total}</div><div class="sub">${m.vendidas} vendidas · ${m.perdidas} perdidas</div></div>
-    <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.total} solicitudes</div>
+    <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.total} solicitudes</div></div>
     <div class="crm-metric"><div class="label">Días promedio respuesta</div><div class="value">${m.promResp}</div><div class="sub">de recepción a 1er contacto</div></div>
     <div class="crm-metric ${m.stale.length>5?"alert":""}"><div class="label">Sin contactar +7 días</div><div class="value">${m.stale.length}</div><div class="sub">requieren seguimiento</div></div>
     <div class="crm-metric ${m.sinRecibo>0?"alert":""}"><div class="label">Sin recibo de luz</div><div class="value">${m.sinRecibo}</div><div class="sub">bloqueadas para cotizar</div></div>
