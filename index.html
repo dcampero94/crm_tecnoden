@@ -256,7 +256,7 @@ function cleanDate(s){if(!s)return null;return s.split("T")[0];}
 // ── Dashboard ─────────────────────────────────────────────
 function calcMetrics(base){
   const total=base.length,vendidas=base.filter(r=>r.estado==="Vendida").length,perdidas=base.filter(r=>r.estado==="No vendida").length;
-  const cierre=(vendidas+perdidas)>0?Math.round(vendidas/(vendidas+perdidas)*100):0;
+  const cierre=total>0?Math.round(vendidas/total*100):0;
   const sinRecibo=base.filter(r=>!r.tieneRecibo&&!r.reciboNA&&r.estado!=="Vendida"&&r.estado!=="No vendida").length;
   const t=today();
   const resp=base.filter(r=>r.fechaRecepcion&&r.fechaUltimoContacto).map(r=>daysBetween(cleanDate(r.fechaRecepcion),cleanDate(r.fechaUltimoContacto))).filter(n=>n!==null&&n>=0);
@@ -276,7 +276,7 @@ function renderDashboard(){
   const m = calcMetrics(base);
   document.getElementById("metricsGrid").innerHTML=`
     <div class="crm-metric"><div class="label">Total</div><div class="value">${m.total}</div><div class="sub">${m.vendidas} vendidas · ${m.perdidas} perdidas</div></div>
-    <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.vendidas+m.perdidas} cerradas</div></div>
+    <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.total} solicitudes</div>
     <div class="crm-metric"><div class="label">Días promedio respuesta</div><div class="value">${m.promResp}</div><div class="sub">de recepción a 1er contacto</div></div>
     <div class="crm-metric ${m.stale.length>5?"alert":""}"><div class="label">Sin contactar +7 días</div><div class="value">${m.stale.length}</div><div class="sub">requieren seguimiento</div></div>
     <div class="crm-metric ${m.sinRecibo>0?"alert":""}"><div class="label">Sin recibo de luz</div><div class="value">${m.sinRecibo}</div><div class="sub">bloqueadas para cotizar</div></div>
