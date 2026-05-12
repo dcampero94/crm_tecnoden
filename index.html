@@ -86,7 +86,10 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 <body>
  <div id="loginWrap" style="display:flex;min-height:100vh;align-items:center;justify-content:center;margin:-1.5rem;padding:2rem;box-sizing:border-box">
   <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:2rem;width:100%;max-width:340px">
-    <h2 style="margin:0 0 1.5rem;font-size:20px;font-weight:500">Iniciar sesión</h2>
+    <div style="margin-bottom:1.5rem">
+  <img id="loginLogo" style="height:40px;width:auto;display:block;margin-bottom:1rem" />
+  <h2 style="margin:0;font-size:20px;font-weight:500">Iniciar sesión</h2>
+</div>
     <div style="margin-bottom:1rem"><label style="display:block;font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Usuario</label>
       <input id="li_user" type="text" placeholder="usuario" style="width:100%;padding:10px 12px;font-size:14px;border:0.5px solid var(--color-border-tertiary);border-radius:8px;background:var(--color-background-primary);color:var(--color-text-primary);box-sizing:border-box" /></div>
     <div style="margin-bottom:1rem"><label style="display:block;font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Contraseña</label>
@@ -609,7 +612,11 @@ function waitForSupabase(tries=0){
   else if(tries<20){setTimeout(()=>waitForSupabase(tries+1),150);}
   else{document.body.innerHTML="<p style='padding:2rem'>Error cargando Supabase. Recarga la página.</p>";}
 }
-document.addEventListener("DOMContentLoaded",()=>waitForSupabase());
+document.addEventListener("DOMContentLoaded",()=>{
+  const src=document.querySelector("#appHeader img")?.src;
+  if(src)document.getElementById("loginLogo").src=src;
+  waitForSupabase();
+});
 </script>
 </body>
 </html>
