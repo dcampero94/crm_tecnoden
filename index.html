@@ -114,6 +114,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     <div class="crm-toolbar">
       <input type="text" id="searchKanban" placeholder="Buscar cliente o teléfono..." />
       <select id="filterAsesor"><option value="">Todos los asesores</option></select>
+      <select id="filterMesKanban"></select>
       <button class="primary" id="btnNuevo">+ Nueva cotización</button>
     </div>
     <div class="kanban" id="kanbanBoard"></div>
@@ -300,15 +301,22 @@ function renderDashboard(){
 
 // ── Kanban ────────────────────────────────────────────────
 function renderKanban(){
+  buildMesOptions("filterMesKanban");
+const mesVal=document.getElementById("filterMesKanban").value;
   const q=document.getElementById("searchKanban").value.toLowerCase().trim();
   const a=document.getElementById("filterAsesor").value;
-  const filtered=registros.filter(r=>{
+  let filtered=registros.filter(r=>{
     if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
     if(a&&r.asesor!==a)return false;
     return true;
   });
+  filtered=filtrarPorMes(filtered,mesVal);
   document.getElementById("kanbanBoard").innerHTML=ESTADOS.map(estado=>{
-    const items=filtered.filter(r=>r.estado===estado);
+    const items=filtered.filter(r=>r.estado===estado).sort((a,b)=>{
+  const da=cleanDate(a.fechaUltimoContacto||a.fechaRecepcion)||"";
+  const db=cleanDate(b.fechaUltimoContacto||b.fechaRecepcion)||"";
+  return db.localeCompare(da);
+});
     return`<div class="kcol" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
       const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);
       const dias=ref?daysBetween(ref,t):null;const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";const sinRecibo=!r.tieneRecibo&&!r.reciboNA;
@@ -538,6 +546,7 @@ async function init(){
   document.getElementById("searchLista").oninput=renderLista;document.getElementById("filterEstado").onchange=renderLista;
   document.getElementById("filterMesLista").onchange=renderLista;
   document.getElementById("filterMesDash").onchange=renderDashboard;
+  document.getElementById("filterMesKanban").onchange=renderKanban;
   subscribeToChanges();
 }
 window.addComment=addComment;window.saveDetail=saveDetail;window.deleteRecord=deleteRecord;window.saveNew=saveNew;window.closeModal=closeModal;window.deleteComment=deleteComment;window.agregarAsesor=agregarAsesor;window.quitarAsesor=quitarAsesor;
