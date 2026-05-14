@@ -427,7 +427,8 @@ async function saveNew(){
   const cliente=document.getElementById("m_cliente").value.trim();if(!cliente){showToast("El nombre es obligatorio");return;}
   const tel=document.getElementById("m_telefono").value.trim();const fecha=document.getElementById("m_fecha").value||today();
   const asesor=document.getElementById("m_asesor").value;const recibo=document.getElementById("m_recibo").checked;const coment=document.getElementById("m_coment").value.trim();
-  const maxNum=registros.reduce((m,r)=>Math.max(m,r.num||0),0);
+  const{data:maxData}=await sbClient.from("cotizaciones").select("num").order("num",{ascending:false}).limit(1);
+const maxNum=maxData&&maxData.length>0?maxData[0].num:0;
   const nuevo={id:`sol_${maxNum+1}_${Date.now()}`,num:maxNum+1,cliente,telefono:tel.replace(/\D/g,""),fechaRecepcion:fecha,tieneRecibo:recibo,reciboNA:false,cotizacionLista:false,asesor,estado:"Nuevo",fechaUltimoContacto:fecha,fechaCierre:null,comentarios:coment?[{fecha,autor:asesor||"Sistema",texto:coment}]:[]};
   await saveRegistro(nuevo);await loadData();closeModal();renderAll();showToast(`#${nuevo.num} ${cliente} agregado`);
 }
