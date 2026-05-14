@@ -341,7 +341,8 @@ const mesVal=document.getElementById("filterMesKanban").value;
     const items=filtered.filter(r=>r.estado===estado).sort((a,b)=>{
   const da=cleanDate(a.fechaUltimoContacto||a.fechaRecepcion)||"";
   const db=cleanDate(b.fechaUltimoContacto||b.fechaRecepcion)||"";
-  return db.localeCompare(da);
+  if(db!==da)return db.localeCompare(da);
+  return (b.num||0)-(a.num||0);
 });
     return`<div class="kcol" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
       const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);
