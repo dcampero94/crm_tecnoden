@@ -80,7 +80,32 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .alert-item:hover{background:var(--color-background-tertiary)}.alert-item .who{font-weight:500}.alert-item .when{color:var(--color-text-tertiary)}
 .mes-banner{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 14px;margin-bottom:1rem;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:8px}
 .mes-banner strong{color:var(--color-text-primary)}
-@media(max-width:680px){.kanban{grid-template-columns:1fr;}.dashboard-charts{grid-template-columns:1fr}}
+.mobile-state-selector{display:none}
+@media(max-width:680px){
+  body{padding:1rem}
+  h1{font-size:18px}
+  .crm-tab{padding:8px 12px;font-size:13px}
+  .crm-metrics{grid-template-columns:1fr 1fr;gap:8px}
+  .crm-metric{padding:10px 12px}
+  .crm-metric .value{font-size:20px}
+  .dashboard-charts{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:70px 1fr 32px;font-size:11px}
+  .mobile-state-selector{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+  .mobile-state-selector button{flex-shrink:0;padding:8px 14px;font-size:13px;font-weight:500;background:var(--color-background-secondary);color:var(--color-text-secondary);border:none;border-radius:20px;cursor:pointer;white-space:nowrap}
+  .mobile-state-selector button.active{background:var(--color-text-primary);color:var(--color-background-primary)}
+  .mobile-state-selector button .badge{margin-left:6px;background:rgba(255,255,255,0.2);padding:1px 7px;border-radius:10px;font-size:11px}
+  .mobile-state-selector button:not(.active) .badge{background:var(--color-background-primary)}
+  .kanban{grid-template-columns:1fr}
+  .kcol{display:none;min-height:300px}
+  .kcol.mobile-active{display:flex}
+  .kcards{max-height:none}
+  .modal{width:96%;max-width:none;padding:1rem}
+  .modal .row{margin-bottom:10px}
+  .crm-toolbar{gap:6px}
+  .crm-toolbar input[type=text],.crm-toolbar select,.crm-toolbar button{font-size:13px;height:36px}
+  table{font-size:12px}
+  th,td{padding:8px 6px !important}
+}
 </style>
 </head>
 <body>
@@ -136,6 +161,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
       <select id="filterMesKanban"></select>
       <button class="primary" id="btnNuevo">+ Nueva cotización</button>
     </div>
+    <div class="mobile-state-selector" id="mobileStateSelector"></div>
     <div class="kanban" id="kanbanBoard"></div>
   </div>
 
@@ -328,7 +354,7 @@ function renderDashboard(){
 // ── Kanban ────────────────────────────────────────────────
 function renderKanban(){
   buildMesOptions("filterMesKanban");
-const mesVal=document.getElementById("filterMesKanban").value;
+  const mesVal=document.getElementById("filterMesKanban").value;
   const q=document.getElementById("searchKanban").value.toLowerCase().trim();
   const a=document.getElementById("filterAsesor").value;
   let filtered=registros.filter(r=>{
@@ -337,14 +363,24 @@ const mesVal=document.getElementById("filterMesKanban").value;
     return true;
   });
   filtered=filtrarPorMes(filtered,mesVal);
+  const isMobile=window.innerWidth<=680;
+  if(!window._mobileState)window._mobileState=ESTADOS[0];
+  const counts={};
+  ESTADOS.forEach(e=>{counts[e]=filtered.filter(r=>r.estado===e).length;});
+  const selector=document.getElementById("mobileStateSelector");
+  if(selector){
+    selector.innerHTML=ESTADOS.map(e=>`<button data-state="${e}" class="${e===window._mobileState?"active":""}">${e}<span class="badge">${counts[e]}</span></button>`).join("");
+    selector.querySelectorAll("button").forEach(b=>b.onclick=()=>{window._mobileState=b.dataset.state;renderKanban();});
+  }
   document.getElementById("kanbanBoard").innerHTML=ESTADOS.map(estado=>{
     const items=filtered.filter(r=>r.estado===estado).sort((a,b)=>{
-  const da=cleanDate(a.fechaUltimoContacto||a.fechaRecepcion)||"";
-  const db=cleanDate(b.fechaUltimoContacto||b.fechaRecepcion)||"";
-  if(db!==da)return db.localeCompare(da);
-  return (b.num||0)-(a.num||0);
-});
-    return`<div class="kcol" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
+      const da=cleanDate(a.fechaUltimoContacto||a.fechaRecepcion)||"";
+      const db=cleanDate(b.fechaUltimoContacto||b.fechaRecepcion)||"";
+      if(db!==da)return db.localeCompare(da);
+      return (b.num||0)-(a.num||0);
+    });
+    const activeClass=isMobile&&estado===window._mobileState?"mobile-active":"";
+    return`<div class="kcol ${activeClass}" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
       const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);
       const dias=ref?daysBetween(ref,t):null;const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";const sinRecibo=!r.tieneRecibo&&!r.reciboNA;
       return`<div class="kcard" draggable="true" data-id="${r.id}"><div class="num">#${r.num}</div><div class="name">${escapeHtml(r.cliente)}</div><div class="meta">${r.asesor?`<span class="pill asesor">${r.asesor}</span>`:""} ${sinRecibo?'<span class="pill warn">Sin recibo</span>':""} ${stale?`<span class="pill stale">${dias}d</span>`:""} ${r.cotizacionLista?'<span class="pill ok">Cotizado</span>':""}</div></div>`;
@@ -619,6 +655,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(src)document.getElementById("loginLogo").src=src;
   waitForSupabase();
 });
+window.addEventListener("resize",()=>{
+  if(document.querySelector(".crm-tab.active")?.dataset.view==="kanban")renderKanban();
+}); 
 </script>
 </body>
 </html>
