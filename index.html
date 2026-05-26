@@ -510,7 +510,10 @@ function openDetail(id){
     </div>
     <div class="detail-section"><h4>Bitácora de seguimiento</h4>
       <div style="display:grid;grid-template-columns:90px 1fr auto;gap:6px;margin-bottom:8px">
-        <select id="c_autor" style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)">${ASESORES.concat(["Sistema"]).map(a=>`<option>${a}</option>`).join("")}</select>
+        ${currentUser.rol==="asesor"
+  ? `<input type="text" id="c_autor" value="${currentUser.nombre}" readonly style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);font-family:inherit;box-sizing:border-box;cursor:not-allowed">`
+  : `<select id="c_autor" style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)">${ASESORES.concat(["Sistema"]).map(a=>`<option>${a}</option>`).join("")}</select>`
+}
         <input type="text" id="c_texto" placeholder="Nuevo comentario..." style="font-size:12px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)" />
         <button onclick="addComment()" style="padding:6px 12px;font-size:12px;font-weight:500;background:var(--color-text-primary);color:var(--color-background-primary);border:none;border-radius:var(--border-radius-md);cursor:pointer">Añadir</button>
       </div>
