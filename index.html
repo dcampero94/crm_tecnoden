@@ -106,6 +106,8 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
   table{font-size:12px}
   th,td{padding:8px 6px !important}
 }
+ @keyframes confeti-caer{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.confeti{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:9999;animation:confeti-caer 1.8s ease-in forwards} 
 </style>
 </head>
 <body>
@@ -401,6 +403,7 @@ function renderKanban(){
       const oldState=r.estado;r.estado=newState;r.fechaUltimoContacto=today();
       r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${oldState}" a "${newState}"`});
       if((newState==="Vendida"||newState==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
+      if(newState==="Vendida")celebrar();
       renderAll();showToast(`${r.cliente} → ${newState}`);
       saveRegistro(r).then(()=>loadData().then(()=>renderAll())).catch(()=>{showToast("Error guardando");loadData().then(()=>renderAll());});
     });
@@ -552,6 +555,7 @@ async function saveDetail(){
   r.telefono=document.getElementById("d_telefono").value.trim().replace(/\D/g,"");
   r.asesor=document.getElementById("d_asesor").value;
   const newEstado=document.getElementById("d_estado").value;
+  const oldEstado=r.estado;
   if(newEstado!==r.estado){r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${r.estado}" a "${newEstado}"`});r.fechaUltimoContacto=today();}
   r.estado=newEstado;
   r.fechaRecepcion=document.getElementById("d_fecha").value;
@@ -559,6 +563,7 @@ async function saveDetail(){
   r.cotizacionLista=document.getElementById("d_cot").checked;
   const cv=document.getElementById("d_cierre").value;r.fechaCierre=cv||null;
   if((newEstado==="Vendida"||newEstado==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
+  if(newEstado==="Vendida"&&oldEstado!=="Vendida")celebrar();
   await saveRegistro(r);await loadData();closeModal();renderAll();showToast("Cambios guardados");
 }
 
@@ -648,7 +653,18 @@ function doLogout(){
  document.getElementById("app").style.display="none";
 }
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementById("loginWrap").style.display!=="none")doLogin();});
-function waitForSupabase(tries=0){
+function celebrar(){
+  const colores=["#1D9E75","#378ADD","#F5C842","#E24B4A","#9B59B6","#F39C12"];
+  for(let i=0;i<60;i++){
+    const el=document.createElement("div");
+    el.className="confeti";
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colores[Math.floor(Math.random()*colores.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-delay:${Math.random()*0.8}s;animation-duration:${1.2+Math.random()*1}s;border-radius:${Math.random()>0.5?"50%":"2px"}`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2500);
+  }
+  showToast("🎉 ¡Venta cerrada!");
+}
+  function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
   else if(tries<20){setTimeout(()=>waitForSupabase(tries+1),150);}
   else{document.body.innerHTML="<p style='padding:2rem'>Error cargando Supabase. Recarga la página.</p>";}
