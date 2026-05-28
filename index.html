@@ -43,7 +43,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .kcard .num{font-size:10px;color:var(--color-text-tertiary)}
 .pill{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;background:var(--color-background-secondary)}
 .pill.warn{background:#FCEBEB;color:#791F1F}.pill.ok{background:#EAF3DE;color:#27500A}.pill.stale{background:#FAEEDA;color:#854F0B}.pill.asesor{background:#EEEDFE;color:#3C3489}
-.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;z-index:10;padding-top:30px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;z-index:10;padding-top:30px}
 .modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.25rem;width:92%;max-width:560px;max-height:88vh;overflow-y:auto;border:0.5px solid var(--color-border-tertiary)}
 .modal h3{margin:0 0 1rem;font-size:18px;font-weight:500}.modal .row{margin-bottom:12px}
 .modal label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500}
@@ -574,7 +574,7 @@ async function deleteRecord(){
 
 function showModal(html){
   let ov=document.getElementById("modalOverlay");
-  if(!ov){ov=document.createElement("div");ov.className="modal-overlay";ov.id="modalOverlay";ov.innerHTML='<div class="modal" id="modalBox"></div>';ov.onclick=(e)=>{if(e.target===ov)closeModal();};document.getElementById("app").appendChild(ov);}
+  if(!ov){ov=document.createElement("div");ov.className="modal-overlay";ov.id="modalOverlay";ov.innerHTML='<div class="modal" id="modalBox"></div>';ov.onclick=null;document.getElementById("app").appendChild(ov);}
   document.getElementById("modalBox").innerHTML=html;
 }
 function closeModal(){const ov=document.getElementById("modalOverlay");if(ov)ov.remove();detailId=null;}
