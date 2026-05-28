@@ -652,7 +652,10 @@ function doLogout(){
  document.getElementById("appHeader").style.display="none";
  document.getElementById("app").style.display="none";
 }
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementById("loginWrap").style.display!=="none")doLogin();});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&document.getElementById("loginWrap").style.display!=="none")doLogin();
+  if(e.key==="Escape"&&document.getElementById("modalOverlay"))closeModal();
+});
 function celebrar(){
   const colores=["#1D9E75","#378ADD","#F5C842","#E24B4A","#9B59B6","#F39C12"];
   for(let i=0;i<60;i++){
