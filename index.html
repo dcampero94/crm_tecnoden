@@ -659,69 +659,190 @@ document.addEventListener("keydown",e=>{
 function celebrar(){
   const overlay=document.createElement("div");
   overlay.id="golAnim";
-  overlay.style.cssText="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);font-family:var(--font-sans)";
-  overlay.innerHTML=`
-    <div style="text-align:center;color:white">
-      <div style="font-size:13px;font-weight:700;letter-spacing:4px;color:#F5C842;margin-bottom:4px">FIFA WORLD CUP 2026</div>
-      <div style="font-size:11px;letter-spacing:2px;color:#aaa;margin-bottom:20px">CANADA · MEXICO · USA</div>
-      <svg width="380" height="220" viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
-        <!-- Fondo cancha -->
-        <rect x="0" y="160" width="380" height="60" fill="#2d8a3e"/>
-        <rect x="0" y="158" width="380" height="4" fill="#277a36"/>
-        <!-- Portería - postes -->
-        <rect x="60" y="60" width="8" height="105" fill="white" rx="2"/>
-        <rect x="260" y="60" width="8" height="105" fill="white" rx="2"/>
-        <rect x="60" y="60" width="208" height="8" fill="white" rx="2"/>
-        <!-- Red portería -->
-        ${[0,1,2,3,4,5,6].map(i=>`<line x1="${68+i*28}" y1="68" x2="${75+i*28}" y2="163" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>`).join("")}
-        ${[0,1,2,3,4,5].map(i=>`<line x1="68" y1="${68+i*16}" x2="268" y2="${75+i*16}" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>`).join("")}
-        <!-- Balón animado -->
-        <g id="balon" style="animation:shootBall 1.2s cubic-bezier(.2,.8,.4,1) forwards">
-          <circle cx="30" cy="200" r="16" fill="white" stroke="#222" stroke-width="1.5"/>
-          <!-- Hexágonos del balón -->
-          <polygon points="30,188 38,193 36,202 24,202 22,193" fill="#1a1a1a" transform="rotate(0,30,196)"/>
-          <polygon points="30,200 36,204 34,211 26,211 24,204" fill="#1a1a1a" transform="rotate(60,30,196)"/>
-        </g>
-        <!-- Efecto red golpeando -->
-        <g id="redGolpe" style="opacity:0;animation:netShake 0.4s 1.15s ease-out forwards">
-          ${[0,1,2,3,4,5,6].map(i=>`<line x1="${68+i*28}" y1="68" x2="${80+i*28}" y2="163" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>`).join("")}
-        </g>
-        <!-- Destellos gol -->
-        <g id="destellos" style="opacity:0;animation:burst 0.5s 1.1s ease-out forwards">
-          ${[0,30,60,90,120,150,180,210,240,270,300,330].map((ang,i)=>{
-            const rad=ang*Math.PI/180;
-            const x=164+Math.cos(rad)*55;
-            const y=110+Math.sin(rad)*45;
-            return`<line x1="164" y1="110" x2="${x}" y2="${y}" stroke="#F5C842" stroke-width="2" opacity="0.9"/>`;
-          }).join("")}
-          <circle cx="164" cy="110" r="8" fill="#F5C842" opacity="0.9"/>
-        </g>
-        <style>
-          @keyframes shootBall{
-            0%{transform:translate(0px,0px) rotate(0deg)}
-            60%{transform:translate(100px,-120px) rotate(300deg)}
-            85%{transform:translate(134px,-90px) rotate(400deg)}
-            100%{transform:translate(134px,-90px) rotate(420deg)}
-          }
-          @keyframes burst{
-            0%{opacity:0;transform:scale(0.3)}
-            50%{opacity:1;transform:scale(1.2)}
-            100%{opacity:0;transform:scale(1.5)}
-          }
-          @keyframes netShake{
-            0%{opacity:0}50%{opacity:1}100%{opacity:0.3}
-          }
-        </style>
-      </svg>
-      <div id="golTexto" style="font-size:52px;font-weight:900;letter-spacing:6px;color:#F5C842;opacity:0;text-shadow:0 0 30px #F5C842;animation:aparecerGol 0.5s 1.1s forwards">¡¡GOOOL!!</div>
-      <div style="font-size:14px;color:#ccc;margin-top:8px;opacity:0;animation:aparecerGol 0.3s 1.5s forwards">🏆 ¡Venta cerrada! 🏆</div>
-      <style>
-        @keyframes aparecerGol{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
-      </style>
-    </div>`;
+  overlay.style.cssText="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);cursor:pointer";
+  overlay.innerHTML=`<div><canvas id="golCanvas" width="480" height="380"></canvas></div>`;
   document.body.appendChild(overlay);
   overlay.onclick=()=>overlay.remove();
-  setTimeout(()=>overlay.remove(),4000);
+
+  const cv=document.getElementById("golCanvas"),ctx=cv.getContext("2d");
+
+  function star(sx,sy,sr,sc){
+    ctx.save();ctx.translate(sx,sy);ctx.beginPath();
+    for(let i=0;i<5;i++){
+      const ao=((i*4-1)/10)*Math.PI,ai=ao+Math.PI/5;
+      if(i===0)ctx.moveTo(Math.cos(ao)*sr,Math.sin(ao)*sr);
+      else ctx.lineTo(Math.cos(ao)*sr,Math.sin(ao)*sr);
+      ctx.lineTo(Math.cos(ai)*sr*0.42,Math.sin(ai)*sr*0.42);
+    }
+    ctx.closePath();ctx.fillStyle=sc;ctx.fill();ctx.restore();
+  }
+
+  function drawTrionda(cx,cy,r,ang){
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(ang);
+    ctx.shadowColor="rgba(0,0,0,0.45)";ctx.shadowBlur=r*0.35;ctx.shadowOffsetX=r*0.07;ctx.shadowOffsetY=r*0.09;
+    const bg=ctx.createRadialGradient(-r*0.28,-r*0.32,r*0.02,r*0.05,r*0.05,r*1.15);
+    bg.addColorStop(0,"#ffffff");bg.addColorStop(0.5,"#f2f2f2");bg.addColorStop(1,"#cccccc");
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
+    ctx.shadowColor="transparent";
+    ctx.save();ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.clip();
+    ctx.beginPath();
+    ctx.moveTo(r*0.06,-r*0.98);
+    ctx.bezierCurveTo(r*0.55,-r*0.82,r*1.0,-r*0.22,r*0.96,r*0.32);
+    ctx.bezierCurveTo(r*0.88,r*0.72,r*0.32,r*0.88,r*0.04,r*0.98);
+    ctx.bezierCurveTo(r*0.1,r*0.5,r*0.12,-r*0.3,r*0.06,-r*0.98);
+    ctx.fillStyle="#29b6f6";ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-r*0.06,-r*0.98);
+    ctx.bezierCurveTo(-r*0.55,-r*0.82,-r*1.0,-r*0.2,-r*0.96,r*0.35);
+    ctx.bezierCurveTo(-r*0.86,r*0.72,-r*0.32,r*0.55,-r*0.04,r*0.22);
+    ctx.bezierCurveTo(-r*0.12,-r*0.08,-r*0.12,-r*0.5,-r*0.06,-r*0.98);
+    ctx.fillStyle="#e53935";ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-r*0.04,r*0.22);
+    ctx.bezierCurveTo(-r*0.32,r*0.55,-r*0.86,r*0.72,-r*0.65,r*1.0);
+    ctx.bezierCurveTo(-r*0.2,r*1.05,r*0.25,r*1.05,r*0.55,r*0.92);
+    ctx.bezierCurveTo(r*0.32,r*0.88,r*0.1,r*0.5,r*0.04,r*0.98);
+    ctx.bezierCurveTo(-r*0.02,r*0.65,-r*0.04,r*0.22,-r*0.04,r*0.22);
+    ctx.fillStyle="#43a047";ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(r*0.96,r*0.32);
+    ctx.bezierCurveTo(r*0.75,r*0.62,r*0.42,r*0.8,r*0.55,r*0.92);
+    ctx.bezierCurveTo(r*0.68,r*0.72,r*0.85,r*0.45,r*0.96,r*0.32);
+    ctx.fillStyle="#1565c0";ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(r*0.06,-r*0.98);
+    ctx.bezierCurveTo(r*0.04,-r*0.75,-r*0.04,-r*0.75,-r*0.06,-r*0.98);
+    ctx.bezierCurveTo(-r*0.02,-r*1.0,r*0.04,-r*1.0,r*0.06,-r*0.98);
+    ctx.fillStyle="#1565c0";ctx.fill();
+    ctx.strokeStyle="rgba(160,160,160,0.6)";ctx.lineWidth=0.7;ctx.setLineDash([1.5,2]);
+    ctx.beginPath();ctx.moveTo(r*0.06,-r*0.98);ctx.bezierCurveTo(r*0.0,-r*0.4,r*0.0,r*0.4,r*0.04,r*0.98);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-r*0.96,r*0.08);ctx.bezierCurveTo(-r*0.35,-r*0.05,r*0.38,r*0.12,r*0.96,r*0.32);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle="rgba(21,101,192,0.45)";ctx.lineWidth=0.6;
+    for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(r*0.55,r*0.05,r*0.1*i,0,Math.PI*2);ctx.stroke();}
+    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(r*0.6,-r*0.5,r*0.08*i,0,Math.PI*2);ctx.stroke();}
+    star(r*0.55,-r*0.48,r*0.12,"#1565c0");
+    star(r*0.72,r*0.08,r*0.16,"#1565c0");
+    star(r*0.44,r*0.52,r*0.10,"#1565c0");
+    ctx.strokeStyle="rgba(170,20,20,0.35)";ctx.lineWidth=0.6;
+    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(-r*0.42,r*0.08,r*0.09*i,0,Math.PI*2);ctx.stroke();}
+    star(-r*0.48,-r*0.22,r*0.10,"rgba(190,40,40,0.55)");
+    star(-r*0.52,r*0.3,r*0.07,"rgba(190,40,40,0.45)");
+    ctx.strokeStyle="rgba(20,120,20,0.35)";ctx.lineWidth=0.6;
+    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(-r*0.05,r*0.72,r*0.08*i,0,Math.PI*2);ctx.stroke();}
+    star(r*0.12,r*0.82,r*0.07,"rgba(20,120,20,0.5)");
+    ctx.font=`bold ${r*0.3}px Arial Black,sans-serif`;
+    ctx.fillStyle="white";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("26",r*0.16,-r*0.06);
+    ctx.font=`bold ${r*0.09}px Arial,sans-serif`;
+    ctx.fillStyle="rgba(21,101,192,0.9)";ctx.fillText("FIFA",r*0.16,r*0.22);
+    ctx.font=`bold ${r*0.085}px Arial Black,sans-serif`;
+    ctx.fillStyle="white";ctx.textAlign="center";ctx.fillText("TRIONDA",r*0.0,r*0.82);
+    ctx.restore();
+    const sh=ctx.createRadialGradient(-r*0.3,-r*0.35,0,-r*0.18,-r*0.22,r*0.52);
+    sh.addColorStop(0,"rgba(255,255,255,0.65)");sh.addColorStop(0.4,"rgba(255,255,255,0.15)");sh.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=sh;ctx.fill();
+    ctx.strokeStyle="rgba(140,140,140,0.4)";ctx.lineWidth=0.7;
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawBG(){
+    ctx.fillStyle="#0a1628";ctx.fillRect(0,0,480,380);
+    [[45,25],[115,12],[195,38],[305,18],[395,32],[28,58],[158,62],[348,48],[468,22],[80,42]].forEach(([sx,sy])=>{
+      ctx.fillStyle="rgba(255,255,255,0.5)";ctx.beginPath();ctx.arc(sx,sy,0.9,0,Math.PI*2);ctx.fill();
+    });
+    ctx.fillStyle="#1a3a6b";ctx.fillRect(0,75,480,130);
+    const fg=ctx.createLinearGradient(0,195,0,380);
+    fg.addColorStop(0,"#2d7a35");fg.addColorStop(1,"#1a5220");
+    ctx.fillStyle=fg;ctx.fillRect(0,195,480,185);
+    ctx.fillStyle="#265e2d";
+    for(let i=0;i<7;i++)ctx.fillRect(0,215+i*24,480,12);
+  }
+
+  function drawGoal(){
+    ctx.strokeStyle="white";ctx.lineWidth=4.5;ctx.lineCap="round";
+    ctx.beginPath();
+    ctx.moveTo(92,78);ctx.lineTo(92,252);ctx.moveTo(388,78);ctx.lineTo(388,252);
+    ctx.moveTo(92,78);ctx.lineTo(388,78);ctx.moveTo(88,252);ctx.lineTo(392,252);
+    ctx.stroke();
+    ctx.strokeStyle="rgba(255,255,255,0.2)";ctx.lineWidth=0.7;
+    for(let x=112;x<388;x+=27){ctx.beginPath();ctx.moveTo(x,80);ctx.lineTo(x+(x>240?4:-4),250);ctx.stroke();}
+    for(let y=0;y<8;y++){ctx.beginPath();ctx.moveTo(94,93+y*20);ctx.lineTo(386,93+y*20);ctx.stroke();}
+  }
+
+  const pts=[
+    {t:0,x:52,y:348,r:18},{t:0.18,x:100,y:272,r:14.5},
+    {t:0.35,x:155,y:198,r:11},{t:0.50,x:206,y:150,r:8.5},
+    {t:0.63,x:244,y:120,r:6.5},{t:0.75,x:268,y:112,r:5.5},
+    {t:0.87,x:278,y:134,r:4.5},{t:1.0,x:274,y:168,r:4},
+  ];
+
+  function getPos(prog){
+    function lerp(a,b,t){return a+(b-a)*t;}
+    function ease(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+    const ep=ease(prog);
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1];
+      if(ep>=a.t&&ep<=b.t){const l=(ep-a.t)/(b.t-a.t);return{x:lerp(a.x,b.x,l),y:lerp(a.y,b.y,l),r:lerp(a.r,b.r,l)};}
+    }
+    return pts[pts.length-1];
+  }
+
+  function drawScene(bx,by,br,ang,trail){
+    drawBG();drawGoal();
+    trail.forEach((t,i)=>{
+      ctx.beginPath();ctx.arc(t.x,t.y,t.r*0.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${(i/trail.length)*0.18})`;ctx.fill();
+    });
+    drawTrionda(bx,by,br,ang);
+  }
+
+  const trail=[];let start=null,lastT=0;
+  const cols=["#F5C842","#fff","#e53935","#1565c0","#43a047","#29b6f6"];
+
+  function frame(ts){
+    if(!start)start=ts;
+    const raw=Math.min((ts-start)/1500,1);
+    const pos=getPos(raw);
+    if(raw-lastT>0.028){trail.push({x:pos.x,y:pos.y,r:pos.r});if(trail.length>14)trail.shift();lastT=raw;}
+    drawScene(pos.x,pos.y,pos.r,raw*Math.PI*9,trail);
+    const ha=Math.min(raw/0.12,1);
+    ctx.globalAlpha=ha;
+    ctx.font="bold 11px Arial";ctx.fillStyle="#F5C842";ctx.textAlign="center";
+    ctx.fillText("FIFA WORLD CUP 2026",240,28);
+    ctx.font="9px Arial";ctx.fillStyle="#aaa";
+    ctx.fillText("CANADA · MÉXICO · USA",240,43);
+    ctx.globalAlpha=1;
+    if(raw>=0.83){
+      const ep=Math.min((raw-0.83)/0.1,1);
+      for(let i=0;i<20;i++){
+        const ang2=(i/20)*Math.PI*2,len=(25+Math.random()*55)*ep;
+        ctx.save();ctx.globalAlpha=Math.max(0,0.9-ep);
+        ctx.strokeStyle=cols[i%cols.length];ctx.lineWidth=2.2;ctx.lineCap="round";
+        ctx.beginPath();ctx.moveTo(pos.x,pos.y);
+        ctx.lineTo(pos.x+Math.cos(ang2)*len,pos.y+Math.sin(ang2)*len);
+        ctx.stroke();ctx.restore();
+      }
+    }
+    if(raw>=0.86){
+      const ga=Math.min((raw-0.86)/0.1,1),gs=0.5+ga*0.5;
+      ctx.save();ctx.globalAlpha=ga;ctx.translate(240,188);ctx.scale(gs,gs);
+      ctx.font="bold 70px 'Arial Black',sans-serif";
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillStyle="#F5C842";ctx.shadowColor="#F5C842";ctx.shadowBlur=22;
+      ctx.fillText("¡GOOOL!",0,0);ctx.shadowBlur=0;ctx.restore();
+    }
+    if(raw>=0.96){
+      const va=Math.min((raw-0.96)/0.04,1);
+      ctx.save();ctx.globalAlpha=va;ctx.font="15px Arial";
+      ctx.textAlign="center";ctx.fillStyle="white";
+      ctx.fillText("🏆 ¡Venta cerrada! 🏆",240,250);ctx.restore();
+    }
+    if(raw<1){requestAnimationFrame(frame);}
+    else{setTimeout(()=>overlay.remove(),3200);}
+  }
+  requestAnimationFrame(frame);
 }
   function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
