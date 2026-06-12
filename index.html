@@ -723,8 +723,6 @@ function celebrar(){
   overlay.onclick=()=>overlay.remove();
   setTimeout(()=>overlay.remove(),4000);
 }
-  showToast("🎉 ¡Venta cerrada!");
-}
   function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
   else if(tries<20){setTimeout(()=>waitForSupabase(tries+1),150);}
