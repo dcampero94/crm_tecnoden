@@ -39,10 +39,11 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .kcards{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;max-height:520px}
 .kcard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px;cursor:grab;font-size:12px;transition:border-color .15s}
 .kcard:hover{border-color:var(--color-border-secondary)}.kcard.dragging{opacity:.4}
+.kcard.paused{border:1px dashed #BA7517;box-shadow:inset 3px 0 0 #BA7517}
 .kcard .name{font-weight:500;font-size:13px;margin-bottom:4px}.kcard .meta{display:flex;gap:6px;flex-wrap:wrap;font-size:11px;align-items:center}
 .kcard .num{font-size:10px;color:var(--color-text-tertiary)}
 .pill{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;background:var(--color-background-secondary)}
-.pill.warn{background:#FCEBEB;color:#791F1F}.pill.ok{background:#EAF3DE;color:#27500A}.pill.stale{background:#FAEEDA;color:#854F0B}.pill.asesor{background:#EEEDFE;color:#3C3489}
+.pill.warn{background:#FCEBEB;color:#791F1F}.pill.ok{background:#EAF3DE;color:#27500A}.pill.stale{background:#FAEEDA;color:#854F0B}.pill.asesor{background:#EEEDFE;color:#3C3489}.pill.paused{background:#FAEEDA;color:#633806;border:1px solid #EF9F27;font-weight:700;letter-spacing:.04em}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;z-index:10;padding-top:30px}
 .modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.25rem;width:92%;max-width:560px;max-height:88vh;overflow-y:auto;border:0.5px solid var(--color-border-tertiary)}
 .modal h3{margin:0 0 1rem;font-size:18px;font-weight:500}.modal .row{margin-bottom:12px}
@@ -62,6 +63,11 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .cierre-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cierre-box label{font-size:12px;color:var(--color-text-secondary);font-weight:500;margin:0;white-space:nowrap}
 .cierre-box input[type=date]{flex:1;min-width:130px;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.pause-box{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#FAEEDA;border:1px solid #EF9F27;border-radius:var(--border-radius-md)}
+.pause-box.inactive{background:var(--color-background-secondary);border-color:var(--color-border-tertiary);opacity:.7}
+.pause-box input{width:auto!important;flex:0 0 auto;margin-top:2px;accent-color:#BA7517}
+.pause-box .pause-title{display:block;color:#633806;font-size:13px;font-weight:700;margin-bottom:2px}
+.pause-box .pause-help{display:block;color:#854F0B;font-size:11px;line-height:1.4}
 .asesor-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--color-background-secondary);border-radius:20px;font-size:13px;font-weight:500;margin:3px}
 .asesor-tag button{background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);font-size:16px;line-height:1;padding:0}.asesor-tag button:hover{color:var(--color-text-danger)}
 .empty{text-align:center;padding:2rem;color:var(--color-text-tertiary);font-size:13px}
@@ -106,8 +112,13 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
   table{font-size:12px}
   th,td{padding:8px 6px !important}
 }
- @keyframes confeti-caer{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-.confeti{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:9999;animation:confeti-caer 1.8s ease-in forwards} 
+@keyframes confeti-caer{0%{transform:translate3d(0,-12vh,0) rotate(0deg);opacity:1}100%{transform:translate3d(var(--desvio),112vh,0) rotate(var(--giro));opacity:0}}
+@keyframes venta-entrada{0%{opacity:0;transform:translate(-50%,-45%) scale(.86)}70%{transform:translate(-50%,-50%) scale(1.04)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.confeti{position:fixed;top:0;left:var(--x);width:var(--w);height:var(--h);background:var(--color);border-radius:2px;pointer-events:none;z-index:9999;animation:confeti-caer var(--duracion) cubic-bezier(.2,.65,.35,1) var(--retraso) forwards}
+.venta-celebracion{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10000;display:flex;align-items:center;gap:12px;min-width:250px;padding:16px 20px;background:var(--color-background-primary);color:var(--color-text-primary);border:1px solid var(--color-border-secondary);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.25);pointer-events:none;animation:venta-entrada .35s ease-out both}
+.venta-celebracion .icono{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#EAF3DE;color:#27500A;font-size:22px;font-weight:700}
+.venta-celebracion strong{display:block;font-size:15px}.venta-celebracion span{display:block;margin-top:2px;font-size:12px;color:var(--color-text-secondary)}
+@media(prefers-reduced-motion:reduce){.confeti{display:none}.venta-celebracion{animation:none}}
 </style>
 </head>
 <body>
@@ -307,9 +318,25 @@ const fmtPhone=(p)=>{if(!p)return"—";const c=p.replace(/\D/g,"");if(c.length==
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 function escapeHtml(s){if(!s)return"";return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function cleanDate(s){if(!s)return null;return s.split("T")[0];}
+function isPausada(r){
+  const eventos=(r.comentarios||[]).filter(c=>c&&c.tipo==="pausa");
+  return eventos.length?eventos[eventos.length-1].activa===true:false;
+}
+function registrarPausa(r,activa){
+  r.comentarios=r.comentarios||[];
+  r.comentarios.push({
+    fecha:today(),
+    autor:"Sistema",
+    texto:activa?"Solicitud puesta EN PAUSA":"Solicitud reactivada",
+    tipo:"pausa",
+    activa
+  });
+}
 
 // ── Dashboard ─────────────────────────────────────────────
 function calcMetrics(base){
+  const pausadas=base.filter(isPausada).length;
+  base=base.filter(r=>!isPausada(r));
   const total=base.length,vendidas=base.filter(r=>r.estado==="Vendida").length,perdidas=base.filter(r=>r.estado==="No vendida").length;
   const cierre=total>0?Math.round(vendidas/total*100):0;
   const sinRecibo=base.filter(r=>!r.tieneRecibo&&!r.reciboNA&&r.estado!=="Vendida"&&r.estado!=="No vendida").length;
@@ -318,19 +345,21 @@ function calcMetrics(base){
   const promResp=resp.length>0?Math.round(resp.reduce((a,b)=>a+b,0)/resp.length):0;
   const stale=base.filter(r=>{if(r.estado==="Vendida"||r.estado==="No vendida")return false;const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);if(!ref)return false;return daysBetween(ref,t)>=7;});
   const sinAtender=base.filter(r=>!r.asesor&&r.estado!=="Vendida"&&r.estado!=="No vendida").length;
-  return{total,vendidas,perdidas,cierre,sinRecibo,promResp,stale,sinAtender};
+  return{total,vendidas,perdidas,cierre,sinRecibo,promResp,stale,sinAtender,pausadas};
 }
 
 function renderDashboard(){
   buildMesOptions("filterMesDash");
   const mesVal = document.getElementById("filterMesDash").value;
-  const base = filtrarPorMes(registros, mesVal);
+  const baseTodas = filtrarPorMes(registros, mesVal);
+  const base = baseTodas.filter(r=>!isPausada(r));
   const banner = document.getElementById("mesBannerDash");
-  banner.innerHTML = mesVal ? `<div class="mes-banner">${mesBannerText(mesVal)} — ${base.length} cotizaciones</div>` : "";
+  const pausadas=baseTodas.length-base.length;
+  banner.innerHTML = mesVal ? `<div class="mes-banner">${mesBannerText(mesVal)} — ${base.length} activas${pausadas?` · ${pausadas} en pausa`:""}</div>` : "";
 
-  const m = calcMetrics(base);
+  const m = calcMetrics(baseTodas);
   document.getElementById("metricsGrid").innerHTML=`
-    <div class="crm-metric"><div class="label">Total</div><div class="value">${m.total}</div><div class="sub">${m.vendidas} vendidas · ${m.perdidas} perdidas</div></div>
+    <div class="crm-metric"><div class="label">Total contabilizado</div><div class="value">${m.total}</div><div class="sub">${m.vendidas} vendidas · ${m.perdidas} perdidas${m.pausadas?` · ${m.pausadas} en pausa excluidas`:""}</div></div>
     <div class="crm-metric success"><div class="label">% Cierre</div><div class="value">${m.cierre}%</div><div class="sub">${m.vendidas} de ${m.total} solicitudes</div></div>
     <div class="crm-metric"><div class="label">Días promedio respuesta</div><div class="value">${m.promResp}</div><div class="sub">de recepción a 1er contacto</div></div>
     <div class="crm-metric ${m.stale.length>5?"alert":""}"><div class="label">Sin contactar +7 días</div><div class="value">${m.stale.length}</div><div class="sub">requieren seguimiento</div></div>
@@ -384,8 +413,8 @@ function renderKanban(){
     const activeClass=isMobile&&estado===window._mobileState?"mobile-active":"";
     return`<div class="kcol ${activeClass}" data-state="${estado}"><div class="kcol-head"><span><span class="dot"></span>${estado}</span><span class="count">${items.length}</span></div><div class="kcards">${items.map(r=>{
       const t=today();const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);
-      const dias=ref?daysBetween(ref,t):null;const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";const sinRecibo=!r.tieneRecibo&&!r.reciboNA;
-      return`<div class="kcard" draggable="true" data-id="${r.id}"><div class="num">#${r.num}</div><div class="name">${escapeHtml(r.cliente)}</div><div class="meta">${r.asesor?`<span class="pill asesor">${r.asesor}</span>`:""} ${sinRecibo?'<span class="pill warn">Sin recibo</span>':""} ${stale?`<span class="pill stale">${dias}d</span>`:""} ${r.cotizacionLista?'<span class="pill ok">Cotizado</span>':""}</div></div>`;
+      const pausada=isPausada(r);const dias=ref?daysBetween(ref,t):null;const stale=!pausada&&dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";const sinRecibo=!pausada&&!r.tieneRecibo&&!r.reciboNA;
+      return`<div class="kcard ${pausada?"paused":""}" draggable="true" data-id="${r.id}"><div class="num">#${r.num}</div><div class="name">${escapeHtml(r.cliente)}</div><div class="meta">${pausada?'<span class="pill paused">EN PAUSA</span>':""} ${r.asesor?`<span class="pill asesor">${r.asesor}</span>`:""} ${sinRecibo?'<span class="pill warn">Sin recibo</span>':""} ${stale?`<span class="pill stale">${dias}d</span>`:""} ${r.cotizacionLista?'<span class="pill ok">Cotizado</span>':""}</div></div>`;
     }).join("")}</div></div>`;
   }).join("");
   document.querySelectorAll(".kcard").forEach(card=>{
@@ -402,6 +431,7 @@ function renderKanban(){
       const r=registros.find(x=>x.id===id);if(!r||r.estado===newState)return;
       const oldState=r.estado;r.estado=newState;r.fechaUltimoContacto=today();
       r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${oldState}" a "${newState}"`});
+      if(newState!=="Cotización Entregada"&&isPausada(r))registrarPausa(r,false);
       if((newState==="Vendida"||newState==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
       if(newState==="Vendida")celebrar();
       renderAll();showToast(`${r.cliente} → ${newState}`);
@@ -431,19 +461,19 @@ function renderLista(){
       <thead><tr style="background:var(--color-background-secondary);text-align:left">
         <th style="padding:10px;width:36px">#</th><th style="padding:10px">Cliente</th>
         <th style="padding:10px;width:100px">Teléfono</th><th style="padding:10px;width:80px">Asesor</th>
-        <th style="padding:10px;width:100px">Estado</th><th style="padding:10px;width:65px">Días</th>
+        <th style="padding:10px;width:145px">Estado</th><th style="padding:10px;width:65px">Días</th>
         <th style="padding:10px;width:80px">Cierre</th>
       </tr></thead>
       <tbody>${filtered.map(r=>{
         const ref=cleanDate(r.fechaUltimoContacto||r.fechaRecepcion);const dias=ref?daysBetween(ref,today()):null;
-        const stale=dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";
+        const pausada=isPausada(r);const stale=!pausada&&dias!==null&&dias>=7&&r.estado!=="Vendida"&&r.estado!=="No vendida";
         return`<tr style="border-top:0.5px solid var(--color-border-tertiary);cursor:pointer" data-id="${r.id}" class="lrow">
           <td style="padding:10px;color:var(--color-text-tertiary)">${r.num}</td>
           <td style="padding:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.cliente)}</td>
           <td style="padding:10px;color:var(--color-text-secondary)">${fmtPhone(r.telefono)}</td>
           <td style="padding:10px">${r.asesor||"—"}</td>
-          <td style="padding:10px"><span style="background:var(--color-background-secondary);padding:2px 8px;border-radius:8px;font-size:11px">${r.estado}</span></td>
-          <td style="padding:10px;color:${stale?"var(--color-text-danger)":"var(--color-text-secondary)"}">${dias!==null?dias+"d":"—"}</td>
+          <td style="padding:10px"><span style="background:var(--color-background-secondary);padding:2px 8px;border-radius:8px;font-size:11px">${r.estado}</span>${pausada?' <span class="pill paused">EN PAUSA</span>':""}</td>
+          <td style="padding:10px;color:${stale?"var(--color-text-danger)":"var(--color-text-secondary)"}">${pausada?"—":(dias!==null?dias+"d":"—")}</td>
           <td style="padding:10px;color:var(--color-text-secondary);font-size:12px">${fmtDate(r.fechaCierre)}</td>
         </tr>`;
       }).join("")}</tbody>
@@ -479,7 +509,7 @@ function renderComs(coms){
     const i=coms.length-1-iRev;
     return`<div class="coment">
       <div class="head"><span><span class="author">${escapeHtml(c.autor)}</span> · ${fmtDate(c.fecha)}</span>
-      <button class="del-btn" onclick="deleteComment(${i})" title="Borrar comentario">×</button></div>
+      ${c.tipo==="pausa"?"":`<button class="del-btn" onclick="deleteComment(${i})" title="Borrar comentario">×</button>`}</div>
       <div class="text">${escapeHtml(c.texto)}</div>
     </div>`;
   }).join("");
@@ -502,6 +532,13 @@ function openDetail(id){
     <div class="row" style="display:flex;gap:14px;font-size:13px">
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_recibo" ${r.tieneRecibo?"checked":""}/> Tiene recibo</label>
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_cot" ${r.cotizacionLista?"checked":""}/> Cotización lista</label>
+    </div>
+    <div class="row pause-box" id="d_pausa_box">
+      <input type="checkbox" id="d_pausa" ${isPausada(r)?"checked":""} />
+      <label for="d_pausa" style="margin:0">
+        <span class="pause-title">Poner solicitud en pausa</span>
+        <span class="pause-help">Se mantiene en Cotización Entregada, pero no cuenta en estadísticas ni alertas.</span>
+      </label>
     </div>
     <div class="row">
       <label>Fecha de cierre</label>
@@ -532,6 +569,16 @@ function openDetail(id){
     </div>`);
   const ct=document.getElementById("c_texto");
   if(ct)ct.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment();}});
+  const estado=document.getElementById("d_estado"),pausa=document.getElementById("d_pausa"),pausaBox=document.getElementById("d_pausa_box");
+  const syncPauseControl=()=>{
+    const disponible=estado.value==="Cotización Entregada";
+    pausa.disabled=!disponible;
+    pausaBox.classList.toggle("inactive",!disponible);
+    pausaBox.querySelector(".pause-help").textContent=disponible
+      ?"Se mantiene en Cotización Entregada, pero no cuenta en estadísticas ni alertas."
+      :"La pausa solo está disponible en Cotización Entregada.";
+  };
+  estado.addEventListener("change",syncPauseControl);syncPauseControl();
 }
 
 async function addComment(){
@@ -556,7 +603,10 @@ async function saveDetail(){
   r.asesor=document.getElementById("d_asesor").value;
   const newEstado=document.getElementById("d_estado").value;
   const oldEstado=r.estado;
+  const oldPausa=isPausada(r);
+  const newPausa=newEstado==="Cotización Entregada"&&document.getElementById("d_pausa").checked;
   if(newEstado!==r.estado){r.comentarios=r.comentarios||[];r.comentarios.push({fecha:today(),autor:"Sistema",texto:`Movido de "${r.estado}" a "${newEstado}"`});r.fechaUltimoContacto=today();}
+  if(newPausa!==oldPausa)registrarPausa(r,newPausa);
   r.estado=newEstado;
   r.fechaRecepcion=document.getElementById("d_fecha").value;
   r.tieneRecibo=document.getElementById("d_recibo").checked;if(r.tieneRecibo)r.reciboNA=false;
@@ -582,10 +632,10 @@ function closeModal(){const ov=document.getElementById("modalOverlay");if(ov)ov.
 function exportCSV(){
   const mesVal=document.getElementById("filterMesLista").value;
   const base=filtrarPorMes(registros,mesVal);
-  const rows=[["#","Cliente","Telefono","Asesor","Estado","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
+  const rows=[["#","Cliente","Telefono","Asesor","Estado","EnPausa","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
   base.slice().sort((a,b)=>a.num-b.num).forEach(r=>{
     const com=(r.comentarios||[]).map(c=>`[${c.fecha} ${c.autor}] ${c.texto}`).join(" | ");
-    rows.push([r.num,r.cliente,r.telefono,r.asesor,r.estado,cleanDate(r.fechaRecepcion)||"",cleanDate(r.fechaUltimoContacto)||"",cleanDate(r.fechaCierre)||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);
+    rows.push([r.num,r.cliente,r.telefono,r.asesor,r.estado,isPausada(r)?"SI":"NO",cleanDate(r.fechaRecepcion)||"",cleanDate(r.fechaUltimoContacto)||"",cleanDate(r.fechaCierre)||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);
   });
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);
@@ -657,192 +707,34 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"&&document.getElementById("modalOverlay"))closeModal();
 });
 function celebrar(){
-  const overlay=document.createElement("div");
-  overlay.id="golAnim";
-  overlay.style.cssText="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);cursor:pointer";
-  overlay.innerHTML=`<div><canvas id="golCanvas" width="480" height="380"></canvas></div>`;
-  document.body.appendChild(overlay);
-  overlay.onclick=()=>overlay.remove();
+  document.getElementById("ventaCelebracion")?.remove();
+  document.querySelectorAll(".confeti").forEach(el=>el.remove());
+  const aviso=document.createElement("div");
+  aviso.id="ventaCelebracion";
+  aviso.className="venta-celebracion";
+  aviso.setAttribute("role","status");
+  aviso.setAttribute("aria-live","polite");
+  aviso.innerHTML='<div class="icono">✓</div><div><strong>¡Venta cerrada!</strong><span>La cotización se marcó como vendida.</span></div>';
+  document.body.appendChild(aviso);
 
-  const cv=document.getElementById("golCanvas"),ctx=cv.getContext("2d");
-
-  function star(sx,sy,sr,sc){
-    ctx.save();ctx.translate(sx,sy);ctx.beginPath();
-    for(let i=0;i<5;i++){
-      const ao=((i*4-1)/10)*Math.PI,ai=ao+Math.PI/5;
-      if(i===0)ctx.moveTo(Math.cos(ao)*sr,Math.sin(ao)*sr);
-      else ctx.lineTo(Math.cos(ao)*sr,Math.sin(ao)*sr);
-      ctx.lineTo(Math.cos(ai)*sr*0.42,Math.sin(ai)*sr*0.42);
+  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const colores=["#378ADD","#1D9E75","#EF9F27","#D4537E","#7F77DD","#E24B4A"];
+    for(let i=0;i<80;i++){
+      const pieza=document.createElement("i");
+      pieza.className="confeti";
+      pieza.style.setProperty("--x",`${Math.random()*100}vw`);
+      pieza.style.setProperty("--w",`${5+Math.random()*7}px`);
+      pieza.style.setProperty("--h",`${8+Math.random()*9}px`);
+      pieza.style.setProperty("--color",colores[i%colores.length]);
+      pieza.style.setProperty("--desvio",`${-70+Math.random()*140}px`);
+      pieza.style.setProperty("--giro",`${360+Math.random()*720}deg`);
+      pieza.style.setProperty("--duracion",`${1.7+Math.random()*1.1}s`);
+      pieza.style.setProperty("--retraso",`${Math.random()*.45}s`);
+      document.body.appendChild(pieza);
+      setTimeout(()=>pieza.remove(),3400);
     }
-    ctx.closePath();ctx.fillStyle=sc;ctx.fill();ctx.restore();
   }
-
-  function drawTrionda(cx,cy,r,ang){
-    ctx.save();ctx.translate(cx,cy);ctx.rotate(ang);
-    ctx.shadowColor="rgba(0,0,0,0.45)";ctx.shadowBlur=r*0.35;ctx.shadowOffsetX=r*0.07;ctx.shadowOffsetY=r*0.09;
-    const bg=ctx.createRadialGradient(-r*0.28,-r*0.32,r*0.02,r*0.05,r*0.05,r*1.15);
-    bg.addColorStop(0,"#ffffff");bg.addColorStop(0.5,"#f2f2f2");bg.addColorStop(1,"#cccccc");
-    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.shadowColor="transparent";
-    ctx.save();ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.clip();
-    ctx.beginPath();
-    ctx.moveTo(r*0.06,-r*0.98);
-    ctx.bezierCurveTo(r*0.55,-r*0.82,r*1.0,-r*0.22,r*0.96,r*0.32);
-    ctx.bezierCurveTo(r*0.88,r*0.72,r*0.32,r*0.88,r*0.04,r*0.98);
-    ctx.bezierCurveTo(r*0.1,r*0.5,r*0.12,-r*0.3,r*0.06,-r*0.98);
-    ctx.fillStyle="#29b6f6";ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-r*0.06,-r*0.98);
-    ctx.bezierCurveTo(-r*0.55,-r*0.82,-r*1.0,-r*0.2,-r*0.96,r*0.35);
-    ctx.bezierCurveTo(-r*0.86,r*0.72,-r*0.32,r*0.55,-r*0.04,r*0.22);
-    ctx.bezierCurveTo(-r*0.12,-r*0.08,-r*0.12,-r*0.5,-r*0.06,-r*0.98);
-    ctx.fillStyle="#e53935";ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-r*0.04,r*0.22);
-    ctx.bezierCurveTo(-r*0.32,r*0.55,-r*0.86,r*0.72,-r*0.65,r*1.0);
-    ctx.bezierCurveTo(-r*0.2,r*1.05,r*0.25,r*1.05,r*0.55,r*0.92);
-    ctx.bezierCurveTo(r*0.32,r*0.88,r*0.1,r*0.5,r*0.04,r*0.98);
-    ctx.bezierCurveTo(-r*0.02,r*0.65,-r*0.04,r*0.22,-r*0.04,r*0.22);
-    ctx.fillStyle="#43a047";ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(r*0.96,r*0.32);
-    ctx.bezierCurveTo(r*0.75,r*0.62,r*0.42,r*0.8,r*0.55,r*0.92);
-    ctx.bezierCurveTo(r*0.68,r*0.72,r*0.85,r*0.45,r*0.96,r*0.32);
-    ctx.fillStyle="#1565c0";ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(r*0.06,-r*0.98);
-    ctx.bezierCurveTo(r*0.04,-r*0.75,-r*0.04,-r*0.75,-r*0.06,-r*0.98);
-    ctx.bezierCurveTo(-r*0.02,-r*1.0,r*0.04,-r*1.0,r*0.06,-r*0.98);
-    ctx.fillStyle="#1565c0";ctx.fill();
-    ctx.strokeStyle="rgba(160,160,160,0.6)";ctx.lineWidth=0.7;ctx.setLineDash([1.5,2]);
-    ctx.beginPath();ctx.moveTo(r*0.06,-r*0.98);ctx.bezierCurveTo(r*0.0,-r*0.4,r*0.0,r*0.4,r*0.04,r*0.98);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(-r*0.96,r*0.08);ctx.bezierCurveTo(-r*0.35,-r*0.05,r*0.38,r*0.12,r*0.96,r*0.32);ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.strokeStyle="rgba(21,101,192,0.45)";ctx.lineWidth=0.6;
-    for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(r*0.55,r*0.05,r*0.1*i,0,Math.PI*2);ctx.stroke();}
-    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(r*0.6,-r*0.5,r*0.08*i,0,Math.PI*2);ctx.stroke();}
-    star(r*0.55,-r*0.48,r*0.12,"#1565c0");
-    star(r*0.72,r*0.08,r*0.16,"#1565c0");
-    star(r*0.44,r*0.52,r*0.10,"#1565c0");
-    ctx.strokeStyle="rgba(170,20,20,0.35)";ctx.lineWidth=0.6;
-    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(-r*0.42,r*0.08,r*0.09*i,0,Math.PI*2);ctx.stroke();}
-    star(-r*0.48,-r*0.22,r*0.10,"rgba(190,40,40,0.55)");
-    star(-r*0.52,r*0.3,r*0.07,"rgba(190,40,40,0.45)");
-    ctx.strokeStyle="rgba(20,120,20,0.35)";ctx.lineWidth=0.6;
-    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(-r*0.05,r*0.72,r*0.08*i,0,Math.PI*2);ctx.stroke();}
-    star(r*0.12,r*0.82,r*0.07,"rgba(20,120,20,0.5)");
-    ctx.font=`bold ${r*0.3}px Arial Black,sans-serif`;
-    ctx.fillStyle="white";ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText("26",r*0.16,-r*0.06);
-    ctx.font=`bold ${r*0.09}px Arial,sans-serif`;
-    ctx.fillStyle="rgba(21,101,192,0.9)";ctx.fillText("FIFA",r*0.16,r*0.22);
-    ctx.font=`bold ${r*0.085}px Arial Black,sans-serif`;
-    ctx.fillStyle="white";ctx.textAlign="center";ctx.fillText("TRIONDA",r*0.0,r*0.82);
-    ctx.restore();
-    const sh=ctx.createRadialGradient(-r*0.3,-r*0.35,0,-r*0.18,-r*0.22,r*0.52);
-    sh.addColorStop(0,"rgba(255,255,255,0.65)");sh.addColorStop(0.4,"rgba(255,255,255,0.15)");sh.addColorStop(1,"rgba(255,255,255,0)");
-    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=sh;ctx.fill();
-    ctx.strokeStyle="rgba(140,140,140,0.4)";ctx.lineWidth=0.7;
-    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawBG(){
-    ctx.fillStyle="#0a1628";ctx.fillRect(0,0,480,380);
-    [[45,25],[115,12],[195,38],[305,18],[395,32],[28,58],[158,62],[348,48],[468,22],[80,42]].forEach(([sx,sy])=>{
-      ctx.fillStyle="rgba(255,255,255,0.5)";ctx.beginPath();ctx.arc(sx,sy,0.9,0,Math.PI*2);ctx.fill();
-    });
-    ctx.fillStyle="#1a3a6b";ctx.fillRect(0,75,480,130);
-    const fg=ctx.createLinearGradient(0,195,0,380);
-    fg.addColorStop(0,"#2d7a35");fg.addColorStop(1,"#1a5220");
-    ctx.fillStyle=fg;ctx.fillRect(0,195,480,185);
-    ctx.fillStyle="#265e2d";
-    for(let i=0;i<7;i++)ctx.fillRect(0,215+i*24,480,12);
-  }
-
-  function drawGoal(){
-    ctx.strokeStyle="white";ctx.lineWidth=4.5;ctx.lineCap="round";
-    ctx.beginPath();
-    ctx.moveTo(92,78);ctx.lineTo(92,252);ctx.moveTo(388,78);ctx.lineTo(388,252);
-    ctx.moveTo(92,78);ctx.lineTo(388,78);ctx.moveTo(88,252);ctx.lineTo(392,252);
-    ctx.stroke();
-    ctx.strokeStyle="rgba(255,255,255,0.2)";ctx.lineWidth=0.7;
-    for(let x=112;x<388;x+=27){ctx.beginPath();ctx.moveTo(x,80);ctx.lineTo(x+(x>240?4:-4),250);ctx.stroke();}
-    for(let y=0;y<8;y++){ctx.beginPath();ctx.moveTo(94,93+y*20);ctx.lineTo(386,93+y*20);ctx.stroke();}
-  }
-
-  const pts=[
-    {t:0,x:52,y:348,r:18},{t:0.18,x:100,y:272,r:14.5},
-    {t:0.35,x:155,y:198,r:11},{t:0.50,x:206,y:150,r:8.5},
-    {t:0.63,x:244,y:120,r:6.5},{t:0.75,x:268,y:112,r:5.5},
-    {t:0.87,x:278,y:134,r:4.5},{t:1.0,x:274,y:168,r:4},
-  ];
-
-  function getPos(prog){
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function ease(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
-    const ep=ease(prog);
-    for(let i=0;i<pts.length-1;i++){
-      const a=pts[i],b=pts[i+1];
-      if(ep>=a.t&&ep<=b.t){const l=(ep-a.t)/(b.t-a.t);return{x:lerp(a.x,b.x,l),y:lerp(a.y,b.y,l),r:lerp(a.r,b.r,l)};}
-    }
-    return pts[pts.length-1];
-  }
-
-  function drawScene(bx,by,br,ang,trail){
-    drawBG();drawGoal();
-    trail.forEach((t,i)=>{
-      ctx.beginPath();ctx.arc(t.x,t.y,t.r*0.5,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${(i/trail.length)*0.18})`;ctx.fill();
-    });
-    drawTrionda(bx,by,br,ang);
-  }
-
-  const trail=[];let start=null,lastT=0;
-  const cols=["#F5C842","#fff","#e53935","#1565c0","#43a047","#29b6f6"];
-
-  function frame(ts){
-    if(!start)start=ts;
-    const raw=Math.min((ts-start)/1500,1);
-    const pos=getPos(raw);
-    if(raw-lastT>0.028){trail.push({x:pos.x,y:pos.y,r:pos.r});if(trail.length>14)trail.shift();lastT=raw;}
-    drawScene(pos.x,pos.y,pos.r,raw*Math.PI*9,trail);
-    const ha=Math.min(raw/0.12,1);
-    ctx.globalAlpha=ha;
-    ctx.font="bold 11px Arial";ctx.fillStyle="#F5C842";ctx.textAlign="center";
-    ctx.fillText("FIFA WORLD CUP 2026",240,28);
-    ctx.font="9px Arial";ctx.fillStyle="#aaa";
-    ctx.fillText("CANADA · MÉXICO · USA",240,43);
-    ctx.globalAlpha=1;
-    if(raw>=0.83){
-      const ep=Math.min((raw-0.83)/0.1,1);
-      for(let i=0;i<20;i++){
-        const ang2=(i/20)*Math.PI*2,len=(25+Math.random()*55)*ep;
-        ctx.save();ctx.globalAlpha=Math.max(0,0.9-ep);
-        ctx.strokeStyle=cols[i%cols.length];ctx.lineWidth=2.2;ctx.lineCap="round";
-        ctx.beginPath();ctx.moveTo(pos.x,pos.y);
-        ctx.lineTo(pos.x+Math.cos(ang2)*len,pos.y+Math.sin(ang2)*len);
-        ctx.stroke();ctx.restore();
-      }
-    }
-    if(raw>=0.86){
-      const ga=Math.min((raw-0.86)/0.1,1),gs=0.5+ga*0.5;
-      ctx.save();ctx.globalAlpha=ga;ctx.translate(240,188);ctx.scale(gs,gs);
-      ctx.font="bold 70px 'Arial Black',sans-serif";
-      ctx.textAlign="center";ctx.textBaseline="middle";
-      ctx.fillStyle="#F5C842";ctx.shadowColor="#F5C842";ctx.shadowBlur=22;
-      ctx.fillText("¡GOOOL!",0,0);ctx.shadowBlur=0;ctx.restore();
-    }
-    if(raw>=0.96){
-      const va=Math.min((raw-0.96)/0.04,1);
-      ctx.save();ctx.globalAlpha=va;ctx.font="15px Arial";
-      ctx.textAlign="center";ctx.fillStyle="white";
-      ctx.fillText("🏆 ¡Venta cerrada! 🏆",240,250);ctx.restore();
-    }
-    if(raw<1){requestAnimationFrame(frame);}
-    else{setTimeout(()=>overlay.remove(),3200);}
-  }
-  requestAnimationFrame(frame);
+  setTimeout(()=>aviso.remove(),2600);
 }
   function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
