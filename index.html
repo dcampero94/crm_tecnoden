@@ -94,6 +94,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .range-shortcuts{display:flex;gap:4px;flex-wrap:wrap}
 .range-shortcuts button{height:32px;padding:0 10px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;white-space:nowrap}
 .range-shortcuts button.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.range-mes{height:32px;padding:0 8px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
 .range-clear{height:32px;padding:0 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;white-space:nowrap}
 @media(max-width:680px){.range-dates{width:100%;justify-content:space-between}.range-dates input[type=date]{flex:1;min-width:0}}
 .mobile-state-selector{display:none}
@@ -164,6 +165,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
   <div class="tab-content active" id="view-dashboard">
     <div class="crm-toolbar range-toolbar" style="margin-bottom:1rem">
       <div class="range-shortcuts" data-scope="Dash"></div>
+      <select class="range-mes" id="filterMesSelDash" onchange="onMesSelect('Dash')"></select>
       <div class="range-dates">
         <label>Del</label>
         <input type="date" id="filterIniDash" onchange="onRangeChange('Dash')">
@@ -186,6 +188,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     <div class="crm-toolbar">
       <input type="text" id="searchKanban" placeholder="Buscar cliente o teléfono..." />
       <select id="filterAsesor"><option value="">Todos los asesores</option></select>
+      <select class="range-mes" id="filterMesSelKanban" onchange="onMesSelect('Kanban')"></select>
       <div class="range-dates">
         <label>Del</label>
         <input type="date" id="filterIniKanban" onchange="onRangeChange('Kanban')">
@@ -204,6 +207,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     <div class="crm-toolbar">
       <input type="text" id="searchLista" placeholder="Buscar cliente o teléfono..." />
       <select id="filterEstado"><option value="">Todos los estados</option><option>Nuevo</option><option>Cotización Entregada</option><option>Vendida</option><option>No vendida</option></select>
+      <select class="range-mes" id="filterMesSelLista" onchange="onMesSelect('Lista')"></select>
       <div class="range-dates">
         <label>Del</label>
         <input type="date" id="filterIniLista" onchange="onRangeChange('Lista')">
@@ -356,6 +360,9 @@ function syncRangeInputs(scope){
   const fin=document.getElementById("filterFin"+scope);
   if(ini) ini.value = rangoState[scope].ini;
   if(fin) fin.value = rangoState[scope].fin;
+  // refleja el mes en el dropdown (si el rango coincide con un mes exacto)
+  const selMes=document.getElementById("filterMesSel"+scope);
+  if(selMes) selMes.value = rangoEsMes(scope);
   // marca el atajo activo (solo Dash)
   if(scope==="Dash"){
     document.querySelectorAll('.range-shortcuts[data-scope="Dash"] button').forEach(b=>{
@@ -413,8 +420,57 @@ function initRangos(){
   rangoState.Kanban = {...r};
   rangoState.Lista  = {...r};
   buildShortcuts();
+  buildMesSelects();
   ["Dash","Kanban","Lista"].forEach(syncRangeInputs);
   rangosInicializados = true;
+}
+
+// Devuelve los meses que tienen cotizaciones, más reciente primero: [{val:"2026-08", label:"Agosto 2026"}]
+function getMesesDisponibles(){
+  const set = new Set();
+  registros.forEach(r=>{
+    const f = (r.fechaRecepcion||"").slice(0,7);
+    if(f.length===7) set.add(f);
+  });
+  return [...set].sort().reverse().map(m=>{
+    const [y,mo] = m.split("-");
+    return {val:m, label:`${MESES_ES[parseInt(mo)-1]} ${y}`};
+  });
+}
+
+// Llena los tres <select> de mes
+function buildMesSelects(){
+  const meses = getMesesDisponibles();
+  const opts = '<option value="">— Mes —</option>' +
+    meses.map(m=>`<option value="${m.val}">${m.label}</option>`).join("");
+  ["Dash","Kanban","Lista"].forEach(scope=>{
+    const sel = document.getElementById("filterMesSel"+scope);
+    if(sel){ const cur=sel.value; sel.innerHTML=opts; sel.value=cur; }
+  });
+}
+
+// Convierte "2026-08" en un rango {ini,fin} de ese mes completo
+function mesToRango(mesVal){
+  if(!mesVal) return {ini:"", fin:""};
+  const [y,mo] = mesVal.split("-").map(Number);
+  return {ini:`${y}-${pad2(mo)}-01`, fin:ymd(new Date(y,mo,0))};
+}
+
+// Al elegir un mes en el dropdown
+function onMesSelect(scope){
+  const sel = document.getElementById("filterMesSel"+scope);
+  rangoState[scope] = mesToRango(sel.value);
+  syncRangeInputs(scope);
+  refreshView(scope);
+}
+
+// Detecta si el rango actual coincide exactamente con un mes calendario y devuelve "YYYY-MM", si no ""
+function rangoEsMes(scope){
+  const {ini,fin} = rangoState[scope];
+  if(!ini || !fin) return "";
+  const [y,mo] = ini.split("-").map(Number);
+  const r = mesToRango(`${y}-${pad2(mo)}`);
+  return (r.ini===ini && r.fin===fin) ? `${y}-${pad2(mo)}` : "";
 }
 
 // ── Utils ─────────────────────────────────────────────────
@@ -753,6 +809,7 @@ function switchView(v){
   if(v==="config")renderConfig();
 }
 function renderAll(){
+  if(rangosInicializados) buildMesSelects();
   const activeView=document.querySelector(".crm-tab.active")?.dataset.view||"dashboard";
   if(activeView==="dashboard")renderDashboard();
   else if(activeView==="kanban")renderKanban();
