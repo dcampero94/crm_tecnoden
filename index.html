@@ -86,6 +86,16 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .alert-item:hover{background:var(--color-background-tertiary)}.alert-item .who{font-weight:500}.alert-item .when{color:var(--color-text-tertiary)}
 .mes-banner{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 14px;margin-bottom:1rem;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:8px}
 .mes-banner strong{color:var(--color-text-primary)}
+.range-toolbar{flex-wrap:wrap;align-items:center}
+.range-dates{display:flex;align-items:center;gap:6px}
+.range-dates label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.range-dates input[type=date]{height:32px;padding:0 8px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);color-scheme:light}
+@media(prefers-color-scheme:dark){.range-dates input[type=date]{color-scheme:dark}}
+.range-shortcuts{display:flex;gap:4px;flex-wrap:wrap}
+.range-shortcuts button{height:32px;padding:0 10px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;white-space:nowrap}
+.range-shortcuts button.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.range-clear{height:32px;padding:0 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;white-space:nowrap}
+@media(max-width:680px){.range-dates{width:100%;justify-content:space-between}.range-dates input[type=date]{flex:1;min-width:0}}
 .mobile-state-selector{display:none}
 @media(max-width:680px){
   body{padding:1rem}
@@ -152,10 +162,15 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 
   <!-- DASHBOARD -->
   <div class="tab-content active" id="view-dashboard">
-    <div class="crm-toolbar" style="margin-bottom:1rem">
-      <label style="font-size:13px;color:var(--color-text-secondary);white-space:nowrap">Filtrar por mes:</label>
-      <select id="filterMesDash" style="height:32px;padding:0 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)"></select>
-      <button onclick="document.getElementById('filterMesDash').value='';renderDashboard()" style="height:32px;padding:0 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer">Ver todos</button>
+    <div class="crm-toolbar range-toolbar" style="margin-bottom:1rem">
+      <div class="range-shortcuts" data-scope="Dash"></div>
+      <div class="range-dates">
+        <label>Del</label>
+        <input type="date" id="filterIniDash" onchange="onRangeChange('Dash')">
+        <label>al</label>
+        <input type="date" id="filterFinDash" onchange="onRangeChange('Dash')">
+      </div>
+      <button class="range-clear" onclick="clearRange('Dash')">Ver todo</button>
     </div>
     <div id="mesBannerDash"></div>
     <div class="crm-metrics" id="metricsGrid"></div>
@@ -171,7 +186,13 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     <div class="crm-toolbar">
       <input type="text" id="searchKanban" placeholder="Buscar cliente o teléfono..." />
       <select id="filterAsesor"><option value="">Todos los asesores</option></select>
-      <select id="filterMesKanban"></select>
+      <div class="range-dates">
+        <label>Del</label>
+        <input type="date" id="filterIniKanban" onchange="onRangeChange('Kanban')">
+        <label>al</label>
+        <input type="date" id="filterFinKanban" onchange="onRangeChange('Kanban')">
+        <button class="range-clear" onclick="clearRange('Kanban')">Todo</button>
+      </div>
       <button class="primary" id="btnNuevo">+ Nueva cotización</button>
     </div>
     <div class="mobile-state-selector" id="mobileStateSelector"></div>
@@ -183,7 +204,13 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
     <div class="crm-toolbar">
       <input type="text" id="searchLista" placeholder="Buscar cliente o teléfono..." />
       <select id="filterEstado"><option value="">Todos los estados</option><option>Nuevo</option><option>Cotización Entregada</option><option>Vendida</option><option>No vendida</option></select>
-      <select id="filterMesLista"></select>
+      <div class="range-dates">
+        <label>Del</label>
+        <input type="date" id="filterIniLista" onchange="onRangeChange('Lista')">
+        <label>al</label>
+        <input type="date" id="filterFinLista" onchange="onRangeChange('Lista')">
+        <button class="range-clear" onclick="clearRange('Lista')">Todo</button>
+      </div>
       <button id="btnExport">Exportar CSV</button>
     </div>
     <div id="listaContainer"></div>
@@ -279,35 +306,115 @@ function asesorOptions(selected=""){
   return`<option value="">Sin asignar</option>`+ASESORES.map(a=>`<option ${a===selected?"selected":""}>${a}</option>`).join("");
 }
 
-// ── Meses ─────────────────────────────────────────────────
+// ── Rango de fechas ───────────────────────────────────────
 const MESES_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-function getMesesDisponibles(){
-  const set = new Set();
-  registros.forEach(r=>{
-    const f = (r.fechaRecepcion||"").split("T")[0];
-    if(f && f.length>=7) set.add(f.slice(0,7)); // "2026-01"
+// Estado del rango por vista: {ini:"YYYY-MM-DD", fin:"YYYY-MM-DD"} · "" = sin límite
+const rangoState = {
+  Dash:  {ini:"", fin:""},
+  Kanban:{ini:"", fin:""},
+  Lista: {ini:"", fin:""},
+};
+let rangosInicializados = false;
+
+function pad2(n){return String(n).padStart(2,"0");}
+function ymd(d){return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;}
+
+// Atajos disponibles. Cada uno devuelve {ini,fin}
+function atajoRango(key){
+  const hoy = new Date();
+  const y = hoy.getFullYear();
+  if(key==="anio")      return {ini:`${y}-01-01`, fin:`${y}-12-31`};
+  if(key==="mesActual"){const m=hoy.getMonth();return {ini:`${y}-${pad2(m+1)}-01`, fin:ymd(new Date(y,m+1,0))};}
+  if(key==="mesPasado"){const d=new Date(y,hoy.getMonth()-1,1);const yy=d.getFullYear();const mm=d.getMonth();return {ini:`${yy}-${pad2(mm+1)}-01`, fin:ymd(new Date(yy,mm+1,0))};}
+  if(key==="trim"){const d=new Date(hoy);d.setDate(d.getDate()-90);return {ini:ymd(d), fin:ymd(hoy)};}
+  return {ini:"", fin:""};
+}
+
+// Botones de atajo (solo en Dashboard)
+function buildShortcuts(){
+  const cont = document.querySelector('.range-shortcuts[data-scope="Dash"]');
+  if(!cont) return;
+  const defs = [
+    {key:"anio",      label:"Este año"},
+    {key:"mesActual", label:"Este mes"},
+    {key:"mesPasado", label:"Mes pasado"},
+    {key:"trim",      label:"Últ. 90 días"},
+  ];
+  cont.innerHTML = defs.map(d=>`<button data-key="${d.key}" onclick="aplicarAtajo('Dash','${d.key}')">${d.label}</button>`).join("");
+}
+
+function aplicarAtajo(scope, key){
+  const r = atajoRango(key);
+  rangoState[scope] = {...r};
+  syncRangeInputs(scope);
+  refreshView(scope);
+}
+
+// Sincroniza los inputs date con el estado
+function syncRangeInputs(scope){
+  const ini=document.getElementById("filterIni"+scope);
+  const fin=document.getElementById("filterFin"+scope);
+  if(ini) ini.value = rangoState[scope].ini;
+  if(fin) fin.value = rangoState[scope].fin;
+  // marca el atajo activo (solo Dash)
+  if(scope==="Dash"){
+    document.querySelectorAll('.range-shortcuts[data-scope="Dash"] button').forEach(b=>{
+      const r = atajoRango(b.dataset.key);
+      b.classList.toggle("active", r.ini===rangoState.Dash.ini && r.fin===rangoState.Dash.fin && r.ini!=="");
+    });
+  }
+}
+
+function onRangeChange(scope){
+  const ini=document.getElementById("filterIni"+scope);
+  const fin=document.getElementById("filterFin"+scope);
+  rangoState[scope] = {ini:ini?ini.value:"", fin:fin?fin.value:""};
+  syncRangeInputs(scope);
+  refreshView(scope);
+}
+
+function clearRange(scope){
+  rangoState[scope] = {ini:"", fin:""};
+  syncRangeInputs(scope);
+  refreshView(scope);
+}
+
+function refreshView(scope){
+  if(scope==="Dash")   renderDashboard();
+  if(scope==="Kanban") renderKanban();
+  if(scope==="Lista")  renderLista();
+}
+
+// Filtra una lista por el rango de una vista
+function filtrarPorRango(lista, scope){
+  const {ini,fin} = rangoState[scope];
+  if(!ini && !fin) return lista;
+  return lista.filter(r=>{
+    const f = (r.fechaRecepcion||"").slice(0,10);
+    if(!f) return false;
+    if(ini && f < ini) return false;
+    if(fin && f > fin) return false;
+    return true;
   });
-  return [...set].sort().reverse();
 }
-function buildMesOptions(selectId, includeAll=true){
-  const sel = document.getElementById(selectId);
-  const current = sel.value;
-  const meses = getMesesDisponibles();
-  sel.innerHTML = (includeAll ? '<option value="">Todos los meses</option>' : '') +
-    meses.map(m=>{
-      const [y,mo] = m.split("-");
-      const label = `${MESES_ES[parseInt(mo)-1]} ${y}`;
-      return `<option value="${m}" ${m===current?"selected":""}>${label}</option>`;
-    }).join("");
+
+function rangoBannerText(scope){
+  const {ini,fin} = rangoState[scope];
+  if(!ini && !fin) return "";
+  const fmt = s=>{if(!s)return "…";const [y,m,d]=s.split("-");return `${d} ${MESES_ES[parseInt(m)-1].slice(0,3)} ${y}`;};
+  return `Mostrando: <strong>${fmt(ini)} — ${fmt(fin)}</strong>`;
 }
-function filtrarPorMes(lista, mesVal){
-  if(!mesVal) return lista;
-  return lista.filter(r=>(r.fechaRecepcion||"").startsWith(mesVal));
-}
-function mesBannerText(mesVal){
-  if(!mesVal) return "";
-  const [y,mo] = mesVal.split("-");
-  return `Mostrando: <strong>${MESES_ES[parseInt(mo)-1]} ${y}</strong>`;
+
+// Al cargar los datos por primera vez, arranca en "Este año" en las tres vistas
+function initRangos(){
+  if(rangosInicializados) return;
+  const r = atajoRango("anio");
+  rangoState.Dash   = {...r};
+  rangoState.Kanban = {...r};
+  rangoState.Lista  = {...r};
+  buildShortcuts();
+  ["Dash","Kanban","Lista"].forEach(syncRangeInputs);
+  rangosInicializados = true;
 }
 
 // ── Utils ─────────────────────────────────────────────────
@@ -349,13 +456,12 @@ function calcMetrics(base){
 }
 
 function renderDashboard(){
-  buildMesOptions("filterMesDash");
-  const mesVal = document.getElementById("filterMesDash").value;
-  const baseTodas = filtrarPorMes(registros, mesVal);
+  const baseTodas = filtrarPorRango(registros, "Dash");
   const base = baseTodas.filter(r=>!isPausada(r));
   const banner = document.getElementById("mesBannerDash");
   const pausadas=baseTodas.length-base.length;
-  banner.innerHTML = mesVal ? `<div class="mes-banner">${mesBannerText(mesVal)} — ${base.length} activas${pausadas?` · ${pausadas} en pausa`:""}</div>` : "";
+  const bt = rangoBannerText("Dash");
+  banner.innerHTML = bt ? `<div class="mes-banner">${bt} — ${base.length} activas${pausadas?` · ${pausadas} en pausa`:""}</div>` : "";
 
   const m = calcMetrics(baseTodas);
   document.getElementById("metricsGrid").innerHTML=`
@@ -384,8 +490,6 @@ function renderDashboard(){
 
 // ── Kanban ────────────────────────────────────────────────
 function renderKanban(){
-  buildMesOptions("filterMesKanban");
-  const mesVal=document.getElementById("filterMesKanban").value;
   const q=document.getElementById("searchKanban").value.toLowerCase().trim();
   const a=document.getElementById("filterAsesor").value;
   let filtered=registros.filter(r=>{
@@ -393,7 +497,7 @@ function renderKanban(){
     if(a&&r.asesor!==a)return false;
     return true;
   });
-  filtered=filtrarPorMes(filtered,mesVal);
+  filtered=filtrarPorRango(filtered,"Kanban");
   const isMobile=window.innerWidth<=680;
   if(!window._mobileState)window._mobileState=ESTADOS[0];
   const counts={};
@@ -444,16 +548,14 @@ function renderKanban(){
 
 // ── Lista ─────────────────────────────────────────────────
 function renderLista(){
-  buildMesOptions("filterMesLista");
   const q=document.getElementById("searchLista").value.toLowerCase().trim();
   const e=document.getElementById("filterEstado").value;
-  const mesVal=document.getElementById("filterMesLista").value;
   let filtered=registros.filter(r=>{
     if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
     if(e&&r.estado!==e)return false;
     return true;
   });
-  filtered=filtrarPorMes(filtered,mesVal).sort((a,b)=>b.num-a.num);
+  filtered=filtrarPorRango(filtered,"Lista").sort((a,b)=>b.num-a.num);
   const c=document.getElementById("listaContainer");
   if(!filtered.length){c.innerHTML='<div class="empty">Sin resultados</div>';return;}
   c.innerHTML=`<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
@@ -630,8 +732,7 @@ function showModal(html){
 function closeModal(){const ov=document.getElementById("modalOverlay");if(ov)ov.remove();detailId=null;}
 
 function exportCSV(){
-  const mesVal=document.getElementById("filterMesLista").value;
-  const base=filtrarPorMes(registros,mesVal);
+  const base=filtrarPorRango(registros,"Lista");
   const rows=[["#","Cliente","Telefono","Asesor","Estado","EnPausa","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
   base.slice().sort((a,b)=>a.num-b.num).forEach(r=>{
     const com=(r.comentarios||[]).map(c=>`[${c.fecha} ${c.autor}] ${c.texto}`).join(" | ");
@@ -639,7 +740,8 @@ function exportCSV(){
   });
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=`cotizaciones_${mesVal||"todas"}_${today()}.csv`;a.click();URL.revokeObjectURL(url);showToast("CSV descargado");
+  const {ini,fin}=rangoState.Lista;const suf=(ini||fin)?`${ini||"inicio"}_a_${fin||"fin"}`:"todas";
+  const a=document.createElement("a");a.href=url;a.download=`cotizaciones_${suf}_${today()}.csv`;a.click();URL.revokeObjectURL(url);showToast("CSV descargado");
 }
 
 function switchView(v){
@@ -664,15 +766,13 @@ async function init(){
     document.querySelector('[data-view="config"]').style.display="none";
   }
   await loadData();
+  initRangos();
   renderDashboard();renderKanban();renderLista();
   document.getElementById("totalBadge").textContent=registros.length;
   document.querySelectorAll(".crm-tab").forEach(t=>t.onclick=()=>switchView(t.dataset.view));
   document.getElementById("btnNuevo").onclick=openNew;document.getElementById("btnExport").onclick=exportCSV;
   document.getElementById("searchKanban").oninput=renderKanban;document.getElementById("filterAsesor").onchange=renderKanban;
   document.getElementById("searchLista").oninput=renderLista;document.getElementById("filterEstado").onchange=renderLista;
-  document.getElementById("filterMesLista").onchange=renderLista;
-  document.getElementById("filterMesDash").onchange=renderDashboard;
-  document.getElementById("filterMesKanban").onchange=renderKanban;
   subscribeToChanges();
 }
 window.addComment=addComment;window.saveDetail=saveDetail;window.deleteRecord=deleteRecord;window.saveNew=saveNew;window.closeModal=closeModal;window.deleteComment=deleteComment;window.agregarAsesor=agregarAsesor;window.quitarAsesor=quitarAsesor;
