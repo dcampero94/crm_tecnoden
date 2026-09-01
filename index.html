@@ -132,8 +132,12 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 @media(prefers-reduced-motion:reduce){.confeti{display:none}.venta-celebracion{animation:none}}
 .venta-celebracion.viva-mexico{border:2px solid #006847;background:linear-gradient(135deg,rgba(0,104,71,0.06),rgba(206,17,38,0.06));min-width:320px}
 .venta-celebracion.viva-mexico strong{color:#006847;font-size:16px;letter-spacing:.3px}
-.venta-celebracion.viva-mexico .icono-mx{font-size:34px;line-height:1;animation:ondear .8s ease-in-out infinite}
-@keyframes ondear{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.venta-celebracion.viva-mexico .bandera-mx{display:flex;width:46px;height:32px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25);flex-shrink:0;animation:ondear .8s ease-in-out infinite;transform-origin:left center}
+.venta-celebracion.viva-mexico .bandera-mx span{flex:1;height:100%}
+.venta-celebracion.viva-mexico .bandera-mx span:nth-child(1){background:#006847}
+.venta-celebracion.viva-mexico .bandera-mx span:nth-child(2){background:#fff}
+.venta-celebracion.viva-mexico .bandera-mx span:nth-child(3){background:#CE1126}
+@keyframes ondear{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 </style>
 </head>
 <body>
@@ -876,7 +880,7 @@ function celebrar(){
   aviso.className="venta-celebracion viva-mexico";
   aviso.setAttribute("role","status");
   aviso.setAttribute("aria-live","polite");
-  aviso.innerHTML='<div class="icono-mx">🇲🇽</div><div><strong>¡VIVA MÉXICO, VIVA TECNODEN!</strong><span>🎉 Venta cerrada 🎉</span></div>';
+  aviso.innerHTML='<div class="bandera-mx"><span></span><span></span><span></span></div><div><strong>¡VIVA MÉXICO, VIVA TECNODEN!</strong><span>🎉 Venta cerrada 🎉</span></div>';
   document.body.appendChild(aviso);
 
   if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
