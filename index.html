@@ -130,6 +130,10 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .venta-celebracion .icono{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#EAF3DE;color:#27500A;font-size:22px;font-weight:700}
 .venta-celebracion strong{display:block;font-size:15px}.venta-celebracion span{display:block;margin-top:2px;font-size:12px;color:var(--color-text-secondary)}
 @media(prefers-reduced-motion:reduce){.confeti{display:none}.venta-celebracion{animation:none}}
+.venta-celebracion.viva-mexico{border:2px solid #006847;background:linear-gradient(135deg,rgba(0,104,71,0.06),rgba(206,17,38,0.06));min-width:320px}
+.venta-celebracion.viva-mexico strong{color:#006847;font-size:16px;letter-spacing:.3px}
+.venta-celebracion.viva-mexico .icono-mx{font-size:34px;line-height:1;animation:ondear .8s ease-in-out infinite}
+@keyframes ondear{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
 </style>
 </head>
 <body>
@@ -866,17 +870,19 @@ document.addEventListener("keydown",e=>{
 function celebrar(){
   document.getElementById("ventaCelebracion")?.remove();
   document.querySelectorAll(".confeti").forEach(el=>el.remove());
+
   const aviso=document.createElement("div");
   aviso.id="ventaCelebracion";
-  aviso.className="venta-celebracion";
+  aviso.className="venta-celebracion viva-mexico";
   aviso.setAttribute("role","status");
   aviso.setAttribute("aria-live","polite");
-  aviso.innerHTML='<div class="icono">✓</div><div><strong>¡Venta cerrada!</strong><span>La cotización se marcó como vendida.</span></div>';
+  aviso.innerHTML='<div class="icono-mx">🇲🇽</div><div><strong>¡VIVA MÉXICO, VIVA TECNODEN!</strong><span>🎉 Venta cerrada 🎉</span></div>';
   document.body.appendChild(aviso);
 
   if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    const colores=["#378ADD","#1D9E75","#EF9F27","#D4537E","#7F77DD","#E24B4A"];
-    for(let i=0;i<80;i++){
+    // Colores de la bandera mexicana
+    const colores=["#006847","#FFFFFF","#CE1126"];
+    for(let i=0;i<90;i++){
       const pieza=document.createElement("i");
       pieza.className="confeti";
       pieza.style.setProperty("--x",`${Math.random()*100}vw`);
@@ -891,7 +897,7 @@ function celebrar(){
       setTimeout(()=>pieza.remove(),3400);
     }
   }
-  setTimeout(()=>aviso.remove(),2600);
+  setTimeout(()=>aviso.remove(),3200);
 }
   function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
