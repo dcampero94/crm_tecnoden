@@ -139,8 +139,6 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .th-sort{cursor:pointer;user-select:none;white-space:nowrap}
 .th-sort:hover{color:var(--color-border-info)}
 .th-sort.on{color:#185FA5}
-.kw-resumen{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 14px;margin-bottom:10px}
-.kw-resumen strong{color:var(--color-text-primary)}
 </style>
 </head>
 <body>
@@ -197,7 +195,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
   <!-- KANBAN -->
   <div class="tab-content" id="view-kanban">
     <div class="crm-toolbar">
-      <input type="text" id="searchKanban" placeholder="Buscar cliente o teléfono..." />
+      <input type="text" id="searchKanban" placeholder="Buscar cliente, teléfono o correo..." />
       <select id="filterAsesor"><option value="">Todos los asesores</option></select>
       <select class="range-mes" id="filterMesSelKanban" onchange="onMesSelect('Kanban')"></select>
       <div class="range-dates">
@@ -216,7 +214,7 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
   <!-- LISTA -->
   <div class="tab-content" id="view-lista">
     <div class="crm-toolbar">
-      <input type="text" id="searchLista" placeholder="Buscar cliente o teléfono..." />
+      <input type="text" id="searchLista" placeholder="Buscar cliente, teléfono o correo..." />
       <select id="filterEstado"><option value="">Todos los estados</option><option>Nuevo</option><option>Cotización Entregada</option><option>Vendida</option><option>No vendida</option></select>
       <select class="range-mes" id="filterMesSelLista" onchange="onMesSelect('Lista')"></select>
       <div class="range-dates">
@@ -562,7 +560,7 @@ function renderKanban(){
   const q=document.getElementById("searchKanban").value.toLowerCase().trim();
   const a=document.getElementById("filterAsesor").value;
   let filtered=registros.filter(r=>{
-    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
+    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q)&&!(r.correo||"").toLowerCase().includes(q))return false;
     if(a&&r.asesor!==a)return false;
     return true;
   });
@@ -625,16 +623,15 @@ function renderLista(){
   const q=document.getElementById("searchLista").value.toLowerCase().trim();
   const e=document.getElementById("filterEstado").value;
   let filtered=registros.filter(r=>{
-    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q))return false;
+    if(q&&!r.cliente.toLowerCase().includes(q)&&!(r.telefono||"").includes(q)&&!(r.correo||"").toLowerCase().includes(q))return false;
     if(e&&r.estado!==e)return false;
     return true;
   });
   filtered=filtrarPorRango(filtered,"Lista");
 
-  const verKw   = e==="" || e==="Cotización Entregada";
   const verDias = e!=="Vendida" && e!=="No vendida";
 
-  if(verKw && listaSortKw){
+  if(listaSortKw){
     filtered.sort((a,b)=>{
       const ka=parseKw(a.kwCotizado), kb=parseKw(b.kwCotizado);
       if(ka===null && kb===null) return b.num-a.num;
@@ -650,27 +647,15 @@ function renderLista(){
   const c=document.getElementById("listaContainer");
   if(!filtered.length){c.innerHTML='<div class="empty">Sin resultados</div>';return;}
 
-  let resumen="";
-  if(verKw){
-    const conKw=filtered.filter(r=>parseKw(r.kwCotizado)!==null);
-    const total=conKw.reduce((s,r)=>s+parseKw(r.kwCotizado),0);
-    const prom=conKw.length?total/conKw.length:0;
-    const f=n=>n.toLocaleString("es-MX",{maximumFractionDigits:2});
-    resumen=`<div class="kw-resumen">
-      <span>Total cotizado: <strong>${f(total)} kW</strong></span>
-      <span>Promedio: <strong>${f(prom)} kW</strong></span>
-      <span>Con kW capturado: <strong>${conKw.length} de ${filtered.length}</strong></span>
-    </div>`;
-  }
   const flecha = listaSortKw==="desc" ? " ▼" : listaSortKw==="asc" ? " ▲" : " ↕";
 
-  c.innerHTML=`${resumen}<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+  c.innerHTML=`<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
     <table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">
       <thead><tr style="background:var(--color-background-secondary);text-align:left">
         <th style="padding:10px;width:36px">#</th><th style="padding:10px">Cliente</th>
+        <th class="th-sort ${listaSortKw?"on":""}" style="padding:10px;width:90px" onclick="toggleSortKw()" title="Ordenar por kW">kW${flecha}</th>
         <th style="padding:10px;width:100px">Teléfono</th><th style="padding:10px;width:80px">Asesor</th>
         <th style="padding:10px;width:145px">Estado</th>
-        ${verKw?`<th class="th-sort ${listaSortKw?"on":""}" style="padding:10px;width:90px" onclick="toggleSortKw()" title="Ordenar por kW">kW${flecha}</th>`:""}
         ${verDias?'<th style="padding:10px;width:65px">Días</th>':""}
         <th style="padding:10px;width:80px">Cierre</th>
       </tr></thead>
@@ -680,10 +665,10 @@ function renderLista(){
         return`<tr style="border-top:0.5px solid var(--color-border-tertiary);cursor:pointer" data-id="${r.id}" class="lrow">
           <td style="padding:10px;color:var(--color-text-tertiary)">${r.num}</td>
           <td style="padding:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.cliente)}</td>
+          <td style="padding:10px;font-weight:${parseKw(r.kwCotizado)?500:400};color:${parseKw(r.kwCotizado)?"var(--color-text-primary)":"var(--color-text-tertiary)"}">${fmtKw(r.kwCotizado)}</td>
           <td style="padding:10px;color:var(--color-text-secondary)">${fmtPhone(r.telefono)}</td>
           <td style="padding:10px">${r.asesor||"—"}</td>
           <td style="padding:10px"><span style="background:var(--color-background-secondary);padding:2px 8px;border-radius:8px;font-size:11px">${r.estado}</span>${pausada?' <span class="pill paused">EN PAUSA</span>':""}</td>
-          ${verKw?`<td style="padding:10px;font-weight:${parseKw(r.kwCotizado)?500:400};color:${parseKw(r.kwCotizado)?"var(--color-text-primary)":"var(--color-text-tertiary)"}">${fmtKw(r.kwCotizado)}</td>`:""}
           ${verDias?`<td style="padding:10px;color:${stale?"var(--color-text-danger)":"var(--color-text-secondary)"}">${pausada?"—":(dias!==null?dias+"d":"—")}</td>`:""}
           <td style="padding:10px;color:var(--color-text-secondary);font-size:12px">${fmtDate(r.fechaCierre)}</td>
         </tr>`;
@@ -697,6 +682,7 @@ function openNew(){
   showModal(`<h3>Nueva cotización</h3>
     <div class="row"><label>Nombre del cliente *</label><input type="text" id="m_cliente" placeholder="Ej. Juan Pérez" /></div>
     <div class="row"><label>Teléfono</label><input type="tel" id="m_telefono" placeholder="833 xxx xxxx" /></div>
+    <div class="row"><label>Correo electrónico</label><input type="email" id="m_correo" placeholder="cliente@correo.com" autocomplete="off" /></div>
     <div class="row"><label>Fecha de recepción</label><input type="date" id="m_fecha" value="${today()}" /></div>
     <div class="row"><label>Asesor</label><select id="m_asesor">${asesorOptions()}</select></div>
     <div class="row"><label>kW cotizados</label><input type="number" id="m_kw" step="0.01" min="0" inputmode="decimal" placeholder="Ej. 8.5 (opcional)" /></div>
@@ -708,10 +694,10 @@ function openNew(){
 async function saveNew(){
   const cliente=document.getElementById("m_cliente").value.trim();if(!cliente){showToast("El nombre es obligatorio");return;}
   const tel=document.getElementById("m_telefono").value.trim();const fecha=document.getElementById("m_fecha").value||today();
-  const asesor=document.getElementById("m_asesor").value;const recibo=document.getElementById("m_recibo").checked;const coment=document.getElementById("m_coment").value.trim();const kw=parseKw(document.getElementById("m_kw").value);
+  const asesor=document.getElementById("m_asesor").value;const recibo=document.getElementById("m_recibo").checked;const coment=document.getElementById("m_coment").value.trim();const kw=parseKw(document.getElementById("m_kw").value);const correo=document.getElementById("m_correo").value.trim();
   const{data:maxData}=await sbClient.from("cotizaciones").select("num").order("num",{ascending:false}).limit(1);
 const maxNum=maxData&&maxData.length>0?maxData[0].num:0;
-  const nuevo={id:`sol_${maxNum+1}_${Date.now()}`,num:maxNum+1,cliente,telefono:tel.replace(/\D/g,""),fechaRecepcion:fecha,tieneRecibo:recibo,reciboNA:false,cotizacionLista:false,asesor,estado:"Nuevo",fechaUltimoContacto:fecha,fechaCierre:null,kwCotizado:kw,comentarios:coment?[{fecha,autor:asesor||"Sistema",texto:coment}]:[]};
+  const nuevo={id:`sol_${maxNum+1}_${Date.now()}`,num:maxNum+1,cliente,telefono:tel.replace(/\D/g,""),fechaRecepcion:fecha,tieneRecibo:recibo,reciboNA:false,cotizacionLista:false,asesor,estado:"Nuevo",fechaUltimoContacto:fecha,fechaCierre:null,kwCotizado:kw,correo:correo||null,comentarios:coment?[{fecha,autor:asesor||"Sistema",texto:coment}]:[]};
   await saveRegistro(nuevo);await loadData();closeModal();renderAll();showToast(`#${nuevo.num} ${cliente} agregado`);
 }
 
@@ -745,6 +731,7 @@ function openDetail(id){
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_recibo" ${r.tieneRecibo?"checked":""}/> Tiene recibo</label>
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_cot" ${r.cotizacionLista?"checked":""}/> Cotización lista</label>
     </div>
+    <div class="row"><label>Correo electrónico</label><input type="email" id="d_correo" placeholder="cliente@correo.com" autocomplete="off" value="${escapeHtml(r.correo||"")}" /></div>
     <div class="row"><label>kW cotizados</label><input type="number" id="d_kw" step="0.01" min="0" inputmode="decimal" placeholder="Ej. 8.5" value="${parseKw(r.kwCotizado)??""}" /></div>
     <div class="row pause-box" id="d_pausa_box">
       <input type="checkbox" id="d_pausa" ${isPausada(r)?"checked":""} />
@@ -825,6 +812,7 @@ async function saveDetail(){
   r.tieneRecibo=document.getElementById("d_recibo").checked;if(r.tieneRecibo)r.reciboNA=false;
   r.cotizacionLista=document.getElementById("d_cot").checked;
   r.kwCotizado=parseKw(document.getElementById("d_kw").value);
+  r.correo=document.getElementById("d_correo").value.trim()||null;
   const cv=document.getElementById("d_cierre").value;r.fechaCierre=cv||null;
   if((newEstado==="Vendida"||newEstado==="No vendida")&&!r.fechaCierre)r.fechaCierre=today();
   if(newEstado==="Vendida"&&oldEstado!=="Vendida")celebrar();
@@ -845,10 +833,10 @@ function closeModal(){const ov=document.getElementById("modalOverlay");if(ov)ov.
 
 function exportCSV(){
   const base=filtrarPorRango(registros,"Lista");
-  const rows=[["#","Cliente","Telefono","Asesor","Estado","EnPausa","kWCotizado","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
+  const rows=[["#","Cliente","Telefono","Correo","Asesor","Estado","EnPausa","kWCotizado","Recepcion","UltimoContacto","FechaCierre","TieneRecibo","CotizacionLista","Comentarios"]];
   base.slice().sort((a,b)=>a.num-b.num).forEach(r=>{
     const com=(r.comentarios||[]).map(c=>`[${c.fecha} ${c.autor}] ${c.texto}`).join(" | ");
-    rows.push([r.num,r.cliente,r.telefono,r.asesor,r.estado,isPausada(r)?"SI":"NO",parseKw(r.kwCotizado)??"",cleanDate(r.fechaRecepcion)||"",cleanDate(r.fechaUltimoContacto)||"",cleanDate(r.fechaCierre)||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);
+    rows.push([r.num,r.cliente,r.telefono,r.correo||"",r.asesor,r.estado,isPausada(r)?"SI":"NO",parseKw(r.kwCotizado)??"",cleanDate(r.fechaRecepcion)||"",cleanDate(r.fechaUltimoContacto)||"",cleanDate(r.fechaCierre)||"",r.tieneRecibo?"SI":(r.reciboNA?"N/A":"NO"),r.cotizacionLista?"SI":"NO",com]);
   });
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);
