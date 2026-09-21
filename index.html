@@ -723,6 +723,7 @@ function openDetail(id){
       <div><label>Teléfono</label><input type="tel" id="d_telefono" value="${r.telefono||""}" /></div>
       <div><label>Asesor</label><select id="d_asesor">${asesorOptions(r.asesor)}</select></div>
     </div>
+    <div class="row"><label>Correo electrónico</label><input type="email" id="d_correo" placeholder="cliente@correo.com" autocomplete="off" value="${escapeHtml(r.correo||"")}" /></div>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div><label>Estado</label><select id="d_estado">${ESTADOS.map(e=>`<option ${r.estado===e?"selected":""}>${e}</option>`).join("")}</select></div>
       <div><label>Fecha recepción</label><input type="date" id="d_fecha" value="${cleanDate(r.fechaRecepcion)||""}" /></div>
@@ -731,7 +732,6 @@ function openDetail(id){
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_recibo" ${r.tieneRecibo?"checked":""}/> Tiene recibo</label>
       <label class="checkbox-row" style="margin:0"><input type="checkbox" id="d_cot" ${r.cotizacionLista?"checked":""}/> Cotización lista</label>
     </div>
-    <div class="row"><label>Correo electrónico</label><input type="email" id="d_correo" placeholder="cliente@correo.com" autocomplete="off" value="${escapeHtml(r.correo||"")}" /></div>
     <div class="row"><label>kW cotizados</label><input type="number" id="d_kw" step="0.01" min="0" inputmode="decimal" placeholder="Ej. 8.5" value="${parseKw(r.kwCotizado)??""}" /></div>
     <div class="row pause-box" id="d_pausa_box">
       <input type="checkbox" id="d_pausa" ${isPausada(r)?"checked":""} />
