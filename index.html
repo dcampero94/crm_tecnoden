@@ -130,11 +130,6 @@ h1{font-size:22px;font-weight:500;margin:0 0 1rem;display:flex;align-items:cente
 .venta-celebracion .icono{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#EAF3DE;color:#27500A;font-size:22px;font-weight:700}
 .venta-celebracion strong{display:block;font-size:15px}.venta-celebracion span{display:block;margin-top:2px;font-size:12px;color:var(--color-text-secondary)}
 @media(prefers-reduced-motion:reduce){.confeti{display:none}.venta-celebracion{animation:none}}
-.venta-celebracion.dia-muertos{border:2px solid #6a1b9a;background:linear-gradient(135deg,rgba(106,27,154,0.08),rgba(255,140,26,0.08));min-width:260px}
-.venta-celebracion.dia-muertos strong{color:#6a1b9a;font-size:17px;letter-spacing:.3px}
-.venta-celebracion.dia-muertos .calaca{flex-shrink:0;animation:flotar 1.2s ease-in-out infinite}
-.venta-celebracion.dia-muertos .calaca svg{width:40px;height:44px;display:block;filter:drop-shadow(0 2px 4px rgba(106,27,154,.3))}
-@keyframes flotar{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
 .pill.kw{background:#E6F1FB;color:#185FA5}
 .th-sort{cursor:pointer;user-select:none;white-space:nowrap}
 .th-sort:hover{color:var(--color-border-info)}
@@ -402,11 +397,20 @@ function refreshView(scope){
 }
 
 // Filtra una lista por el rango de una vista
+// Fecha con la que cada cotización cae dentro del rango:
+// las cerradas (Vendida / No vendida) cuentan en su mes de CIERRE; las demás, en su mes de recepción.
+function fechaEfectiva(r){
+  if(r.estado==="Vendida"||r.estado==="No vendida"){
+    const fc=(r.fechaCierre||"").slice(0,10);
+    if(fc) return fc;
+  }
+  return (r.fechaRecepcion||"").slice(0,10);
+}
 function filtrarPorRango(lista, scope){
   const {ini,fin} = rangoState[scope];
   if(!ini && !fin) return lista;
   return lista.filter(r=>{
-    const f = (r.fechaRecepcion||"").slice(0,10);
+    const f = fechaEfectiva(r);
     if(!f) return false;
     if(ini && f < ini) return false;
     if(fin && f > fin) return false;
@@ -438,7 +442,7 @@ function initRangos(){
 function getMesesDisponibles(){
   const set = new Set();
   registros.forEach(r=>{
-    const f = (r.fechaRecepcion||"").slice(0,7);
+    const f = fechaEfectiva(r).slice(0,7);
     if(f.length===7) set.add(f);
   });
   return [...set].sort().reverse().map(m=>{
@@ -912,30 +916,30 @@ function celebrar(){
   document.querySelectorAll(".confeti").forEach(el=>el.remove());
   const aviso=document.createElement("div");
   aviso.id="ventaCelebracion";
-  aviso.className="venta-celebracion dia-muertos";
+  aviso.className="venta-celebracion";
   aviso.setAttribute("role","status");
   aviso.setAttribute("aria-live","polite");
-  aviso.innerHTML='<div class="calaca"><svg viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg"><g><path d="M20 2C11 2 5 8 5 17c0 5 2 8 4 10 1 1 1 2 1 4v3c0 2 2 4 4 4h12c2 0 4-2 4-4v-3c0-2 0-3 1-4 2-2 4-5 4-10C35 8 29 2 20 2z" fill="#fff" stroke="#d9a441" stroke-width="1.2"/><circle cx="13.5" cy="19" r="4.5" fill="#3a1f5d"/><circle cx="26.5" cy="19" r="4.5" fill="#3a1f5d"/><path d="M13.5 19a4.5 4.5 0 0 1 4.5-4" stroke="#ff8c1a" stroke-width="1.3" fill="none"/><path d="M26.5 19a4.5 4.5 0 0 0-4.5-4" stroke="#ff8c1a" stroke-width="1.3" fill="none"/><circle cx="13.5" cy="19" r="1.4" fill="#ff8c1a"/><circle cx="26.5" cy="19" r="1.4" fill="#ff8c1a"/><path d="M20 24l-2.2 3.5h4.4z" fill="#3a1f5d"/><g stroke="#3a1f5d" stroke-width="1" stroke-linecap="round"><line x1="15" y1="33" x2="15" y2="37"/><line x1="18" y1="33" x2="18" y2="37"/><line x1="22" y1="33" x2="22" y2="37"/><line x1="25" y1="33" x2="25" y2="37"/><line x1="13" y1="35" x2="27" y2="35"/></g><circle cx="20" cy="12" r="2.2" fill="#ff8c1a"/><circle cx="20" cy="12" r="1" fill="#ffd24a"/></g></svg></div><div><strong>¡Venta Cerrada!</strong></div>';
+  aviso.innerHTML='<div class="icono">✓</div><div><strong>¡Venta cerrada!</strong><span>La cotización se marcó como vendida.</span></div>';
   document.body.appendChild(aviso);
 
   if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    const colores=["#6a1b9a","#ff8c1a","#ffd24a","#d81b60","#8e6c1a","#e65100"];
-    for(let i=0;i<90;i++){
+    const colores=["#378ADD","#1D9E75","#EF9F27","#D4537E","#7F77DD","#E24B4A"];
+    for(let i=0;i<80;i++){
       const pieza=document.createElement("i");
       pieza.className="confeti";
       pieza.style.setProperty("--x",`${Math.random()*100}vw`);
-      pieza.style.setProperty("--w",`${5+Math.random()*8}px`);
-      pieza.style.setProperty("--h",`${7+Math.random()*9}px`);
+      pieza.style.setProperty("--w",`${5+Math.random()*7}px`);
+      pieza.style.setProperty("--h",`${8+Math.random()*9}px`);
       pieza.style.setProperty("--color",colores[i%colores.length]);
       pieza.style.setProperty("--desvio",`${-70+Math.random()*140}px`);
       pieza.style.setProperty("--giro",`${360+Math.random()*720}deg`);
-      pieza.style.setProperty("--duracion",`${1.8+Math.random()*1.2}s`);
-      pieza.style.setProperty("--retraso",`${Math.random()*.5}s`);
+      pieza.style.setProperty("--duracion",`${1.7+Math.random()*1.1}s`);
+      pieza.style.setProperty("--retraso",`${Math.random()*.45}s`);
       document.body.appendChild(pieza);
-      setTimeout(()=>pieza.remove(),3600);
+      setTimeout(()=>pieza.remove(),3400);
     }
   }
-  setTimeout(()=>aviso.remove(),3200);
+  setTimeout(()=>aviso.remove(),2600);
 }
   function waitForSupabase(tries=0){
   if(typeof window.supabase!=="undefined"){sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}
